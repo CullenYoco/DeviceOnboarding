@@ -40,6 +40,10 @@ public class DeviceInfo {
         return warehouseInfo;
     }
 
+    public DeviceState getCurrentState() {
+        return currentState;
+    }
+
     public boolean isFlashed() {
         return isFlashed;
     }
@@ -50,6 +54,10 @@ public class DeviceInfo {
 
     public boolean isSentForRepack() {
         return isSentForRepack;
+    }
+
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
     }
 
     public void setBoxReference(String boxReference) {

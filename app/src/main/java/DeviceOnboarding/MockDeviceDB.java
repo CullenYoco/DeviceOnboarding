@@ -1,48 +1,36 @@
 package DeviceOnboarding;
 
+import java.util.ArrayList;
+import java.util.NoSuchElementException;
+
 public class MockDeviceDB {
-    private int deviceCount = 0;
-    private String serialNumbers[] = new String[10];
+    ArrayList<DeviceInfo> deviceList = new ArrayList<DeviceInfo>();
 
-    public void addDevice(String serialNo) {
-        if (isIllegalSerialNumber(serialNo)) {
-            throw new IllegalSerialNumberException();
+    public void addDevice(DeviceInfo deviceInfo) {
+        if (isDeviceInfoIllegal(deviceInfo)) {
+            throw new IllegalArgumentException();
         }
 
-        serialNumbers[deviceCount++] = serialNo;
+        deviceList.add(deviceInfo);
     }
 
-    public boolean contains(String serialNo) {
-        if (isIllegalSerialNumber(serialNo)) {
-            throw new IllegalSerialNumberException();
+    public boolean contains(String serialNumber) {
+        return getIndex(serialNumber) != -1;
+    }
+
+    public DeviceInfo getDevice(String serialNumber) {
+        int index = getIndex(serialNumber);
+
+        if (index == -1) {
+            throw new NoSuchElementException();
         }
 
-        return getIndex(serialNo) != -1;
+        return deviceList.get(index);
     }
 
-    public void removeDevice(String serialNo) {
-        if (isIllegalSerialNumber(serialNo)) {
-            throw new IllegalSerialNumberException();
-        }
-
-        if (isEmpty() || !contains(serialNo)) {
-            throw new IllegalRemoveException();
-        }
-
-        updateDeviceStorage(serialNo);
-    }
-
-    public boolean isEmpty() {
-        return deviceCount == 0;
-    }
-
-    private boolean isIllegalSerialNumber(String serialNo) {
-        return !serialNo.matches("\\d{4}-\\d{3}[\\dxX]");
-    }
-
-    private int getIndex(String serialNo) {
-        for (int i = 0; i < deviceCount; i++) {
-            if (serialNumbers[i].equals(serialNo)) {
+    private int getIndex(String serialNumber) {
+        for (int i = 0; i < deviceList.size(); i++) {
+            if (isDesiredElement(serialNumber, i)) {
                 return i;
             }
         }
@@ -50,16 +38,11 @@ public class MockDeviceDB {
         return -1;
     }
 
-    private void updateDeviceStorage(String serialNo) {
-        for (int i = getIndex(serialNo) + 1; i < deviceCount; i++) {
-            serialNumbers[i - 1] = serialNumbers[i];
-            serialNumbers[i] = null;
-        }
-
-        deviceCount--;
+    private boolean isDesiredElement(String serialNumber, int i) {
+        return deviceList.get(i).getSerialNumber().equals(serialNumber);
     }
 
-    public class IllegalRemoveException extends RuntimeException {};
-
-    public class IllegalSerialNumberException extends RuntimeException {};
+    private boolean isDeviceInfoIllegal(DeviceInfo deviceInfo) {
+        return deviceInfo == null || deviceInfo.getSerialNumber() == null;
+    }
 }
