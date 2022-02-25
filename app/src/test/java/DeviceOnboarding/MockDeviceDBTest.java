@@ -58,4 +58,15 @@ public class MockDeviceDBTest {
             mdb.getDevice("2049-3630");
         });
     }
+
+    @Test
+    public void fullNoSuchElementTest() {
+        DeviceInfo deviceInfo = new DeviceInfo();
+        deviceInfo.setSerialNumber("2049-3630");
+        mdb.addDevice(deviceInfo);
+
+        assertThrows(NoSuchElementException.class, () -> {
+            mdb.getDevice("2049-3631");
+        });
+    }
 }
