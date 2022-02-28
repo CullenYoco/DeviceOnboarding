@@ -10,13 +10,21 @@ public class OnboardingApp {
 
         if (splitRequest[0].equals("/add")) {
             return addDevice(splitRequest[1]);
-        } else if (splitRequest[0].equals("/delivery")) {
-            return addDeliveryInfo(splitRequest[1], splitRequest[2], splitRequest[3]);
-        } else if (splitRequest[0].equals("/damage")) {
-            return addDamage(splitRequest[1], splitRequest[2]);
-        } else {
-            return getDeviceInfo(splitRequest[1]);
         }
+        
+        if (splitRequest[0].equals("/delivery")) {
+            return addDeliveryInfo(splitRequest[1], splitRequest[2], splitRequest[3]);
+        }
+        
+        if (splitRequest[0].equals("/damage")) {
+            return addDamage(splitRequest[1], splitRequest[2]);
+        }
+
+        if (splitRequest[0].equals("/sim")) {
+            return addSIM(splitRequest[1], splitRequest[2], splitRequest[3], splitRequest[4]);
+        }
+        
+        return getDeviceInfo(splitRequest[1]);
     }
 
     private String getDeviceInfo(String serialNumber) {
@@ -53,5 +61,14 @@ public class OnboardingApp {
         deviceInfo.setDamage(DamageRating.LIGHT); // ??
 
         return "DEVICE {" + serialNumber + "}: DAMAGE ADDED\n\tSTATUS: " + deviceInfo.getCurrentState();
+    }
+
+    private String addSIM(String serialNumber, String SNN, String IMSI, String IMEI) {
+        DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
+        SIMCardInfo simCard = new SIMCardInfo(SNN, IMSI, IMEI);
+
+        deviceInfo.setSIMCard(simCard);
+
+        return "DEVICE {" + serialNumber + "}: SIM ADDED\n\tSTATUS: " + deviceInfo.getCurrentState();
     }
 }

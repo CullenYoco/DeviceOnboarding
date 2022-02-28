@@ -77,6 +77,8 @@ public class DeviceInfo {
 
     public void setSIMCard(SIMCardInfo simCard) {
         this.simCardInfo = simCard;
+
+        currentState = DeviceState.SIM_INSERTED_AND_RECORDED;
     }
 
     public void setWarehouse(WarehouseInfo warehouseInfo) {
@@ -90,7 +92,10 @@ public class DeviceInfo {
         out += "\n\tBOX: " + boxReference;
         out += "\n\tCRATE: " + crateReference;
         out += "\n\tDAMAGE: " + damage;
-        out += "\n\tSIM CARD:\n\t\t" + simCardInfo;
+        out += "\n\tSIM CARD:";
+        out += "\n\t\tSNN: " + simCardInfo.getSNN();
+        out += "\n\t\tIMSI: " + simCardInfo.getIMSI();
+        out += "\n\t\tIMEI: " + simCardInfo.getIMEI();
         out += "\n\tFLASHED: " + isFlashed;
         out += "\n\tKEY INJECTED: " + isKeyInjected;
         out += "\n\tSENT FOR REPACK: " + isSentForRepack;

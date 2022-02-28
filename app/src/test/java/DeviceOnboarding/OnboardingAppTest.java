@@ -20,11 +20,15 @@ class OnboardingAppTest {
         expectedDeviceInfo.setSerialNumber("2049-3630");
         expectedDeviceInfo.setDeliveryInfo("boxRefNo", "crateRefNo");
         expectedDeviceInfo.setDamage(DamageRating.LIGHT);
+        expectedDeviceInfo.setSIMCard(new SIMCardInfo("SNN", "IMSI", "IMEI"));
 
         assertEquals("DEVICE {2049-3630}: DEVICE ADDED\n\tSTATUS: SERIAL_NUMBER_RECORDED", oa.processRequest("/add 2049-3630"));
         assertEquals("DEVICE {2049-3630}: DELIVERY INFO ADDED\n\tSTATUS: DELIVERY_INFO_RECORDED", oa.processRequest("/delivery 2049-3630 boxRefNo crateRefNo"));
         assertEquals("DEVICE {2049-3630}: DAMAGE ADDED\n\tSTATUS: DAMAGE_RECORDED", oa.processRequest("/damage 2049-3630 light"));
+        assertEquals("DEVICE {2049-3630}: SIM ADDED\n\tSTATUS: SIM_INSERTED_AND_RECORDED", oa.processRequest("/sim 2049-3630 SNN IMSI IMEI"));
 
+
+        System.out.println(expectedDeviceInfo.toString());
         assertEquals(expectedDeviceInfo.toString(), oa.processRequest("/info 2049-3630"));
     }
 
