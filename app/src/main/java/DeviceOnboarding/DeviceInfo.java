@@ -58,18 +58,21 @@ public class DeviceInfo {
 
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
+
+        currentState = DeviceState.SERIAL_NUMBER_RECORDED;
     }
 
-    public void setBoxReference(String boxReference) {
+    public void setDeliveryInfo(String boxReference, String crateReference) {
         this.boxReference = boxReference;
-    }
-
-    public void setCrateReference(String crateReference) {
         this.crateReference = crateReference;
+
+        currentState = DeviceState.DELIVERY_INFO_RECORDED;
     }
 
     public void setDamage(DamageRating damage) {
         this.damage = damage;
+
+        currentState = DeviceState.DAMAGE_RECORDED;
     }
 
     public void setSIMCard(SIMCardInfo simCard) {
@@ -78,5 +81,22 @@ public class DeviceInfo {
 
     public void setWarehouse(WarehouseInfo warehouseInfo) {
         this.warehouseInfo = warehouseInfo;
+    }
+
+    @Override
+    public String toString() {
+        String out = "DEVICE {" + serialNumber + "}:";
+
+        out += "\n\tBOX: " + boxReference;
+        out += "\n\tCRATE: " + crateReference;
+        out += "\n\tDAMAGE: " + damage;
+        out += "\n\tSIM CARD:\n\t\t" + simCardInfo;
+        out += "\n\tFLASHED: " + isFlashed;
+        out += "\n\tKEY INJECTED: " + isKeyInjected;
+        out += "\n\tSENT FOR REPACK: " + isSentForRepack;
+        out += "\n\tWAREHOUSE:\n\t\t" + warehouseInfo;
+        out += "\n\tSTATE: " + currentState + "\n";
+
+        return out;
     }
 }

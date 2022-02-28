@@ -18,7 +18,7 @@ public class MockDeviceDB {
         return getIndex(serialNumber) != -1;
     }
 
-    public DeviceInfo getDevice(String serialNumber) {
+    public DeviceInfo getDevice(String serialNumber) throws NoSuchElementException {
         int index = getIndex(serialNumber);
 
         if (index == -1) {
