@@ -6,5 +6,4 @@ public class MockKeyInjection implements IKeyInjector{
     public boolean injectKey(byte[] key) {
         return false;
     }
-    
 }
