@@ -81,6 +81,12 @@ public class DeviceInfo {
         currentState = DeviceState.SIM_INSERTED_AND_RECORDED;
     }
 
+    public void flashDevice() {
+        this.isFlashed = true;
+
+        currentState = DeviceState.FLASHED;
+    }
+
     public void setWarehouse(WarehouseInfo warehouseInfo) {
         this.warehouseInfo = warehouseInfo;
     }

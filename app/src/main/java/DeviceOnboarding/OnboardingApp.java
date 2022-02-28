@@ -4,6 +4,11 @@ import java.util.NoSuchElementException;
 
 public class OnboardingApp {
     MockDeviceDB mockDB = new MockDeviceDB();
+    MockDeviceFlash mockDeviceFlash;
+
+    public OnboardingApp() {
+        mockDeviceFlash = new MockDeviceFlash(0);
+    }
 
     public String processRequest(String requestString) {
         String splitRequest[] = requestString.split(" ");
@@ -22,6 +27,10 @@ public class OnboardingApp {
 
         if (splitRequest[0].equals("/sim")) {
             return addSIM(splitRequest[1], splitRequest[2], splitRequest[3], splitRequest[4]);
+        }
+
+        if (splitRequest[0].equals("/flash")) {
+            return flashDevice(splitRequest[1]);
         }
         
         return getDeviceInfo(splitRequest[1]);
@@ -70,5 +79,15 @@ public class OnboardingApp {
         deviceInfo.setSIMCard(simCard);
 
         return "DEVICE {" + serialNumber + "}: SIM ADDED\n\tSTATUS: " + deviceInfo.getCurrentState();
+    }
+
+    private String flashDevice(String serialNumber) {
+        DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
+        
+        if (mockDeviceFlash.flashDevice()) {
+            deviceInfo.flashDevice();
+        }
+
+        return "DEVICE {" + serialNumber + "}: DEVICE FLASHED\n\tSTATUS: " + deviceInfo.getCurrentState();
     }
 }
