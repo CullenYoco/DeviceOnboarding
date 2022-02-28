@@ -68,7 +68,7 @@ public class OnboardingApp {
         deviceInfo.setSerialNumber(serialNumber);
 
         mockDB.addDevice(deviceInfo);
-        return "DEVICE {" + serialNumber + "}: DEVICE ADDED\n\tSTATUS: " + deviceInfo.getCurrentState();
+        return outputString(serialNumber, deviceInfo, "DEVICE ADDED");
     }
 
     private String addDeliveryInfo(String serialNumber, String boxReference, String crateReference) {
@@ -76,7 +76,7 @@ public class OnboardingApp {
 
         deviceInfo.setDeliveryInfo(boxReference, crateReference);
 
-        return "DEVICE {" + serialNumber + "}: DELIVERY INFO ADDED\n\tSTATUS: " + deviceInfo.getCurrentState();
+        return outputString(serialNumber, deviceInfo, "DELIVERY INFO ADDED");
     }
 
     private String addDamage(String serialNumber, String damage) {
@@ -84,7 +84,7 @@ public class OnboardingApp {
 
         deviceInfo.setDamage(DamageRating.LIGHT); // ??
 
-        return "DEVICE {" + serialNumber + "}: DAMAGE ADDED\n\tSTATUS: " + deviceInfo.getCurrentState();
+        return outputString(serialNumber, deviceInfo, "DAMAGE ADDED");
     }
 
     private String addSIM(String serialNumber, String SNN, String IMSI, String IMEI) {
@@ -93,7 +93,7 @@ public class OnboardingApp {
 
         deviceInfo.setSIMCard(simCard);
 
-        return "DEVICE {" + serialNumber + "}: SIM ADDED\n\tSTATUS: " + deviceInfo.getCurrentState();
+        return outputString(serialNumber, deviceInfo, "SIM ADDED");
     }
 
     private String flashDevice(String serialNumber) {
@@ -103,7 +103,7 @@ public class OnboardingApp {
             deviceInfo.flashDevice();
         }
 
-        return "DEVICE {" + serialNumber + "}: DEVICE FLASHED\n\tSTATUS: " + deviceInfo.getCurrentState();
+        return outputString(serialNumber, deviceInfo, "DEVICE FLASHED");
     }
 
     private String injectKey(String serialNumber) {
@@ -114,7 +114,7 @@ public class OnboardingApp {
             deviceInfo.injectKey(key);
         }
 
-        return "DEVICE {" + serialNumber + "}: KEY INJECTED\n\tSTATUS: " + deviceInfo.getCurrentState();
+        return outputString(serialNumber, deviceInfo, "KEY INJECTED");
     }
 
     private String repackDevice(String serialNumber) {
@@ -122,7 +122,7 @@ public class OnboardingApp {
 
         deviceInfo.sendForRepack();
 
-        return "DEVICE {" + serialNumber + "}: DEVICE SENT FOR REPACK\n\tSTATUS: " + deviceInfo.getCurrentState();
+        return outputString(serialNumber, deviceInfo, "DEVICE SENT FOR REPACK");
     }
 
     private String storeDevice(String serialNumber, String warehouseNo, String sectionNo, String rowNo, String shelfNo,
@@ -132,6 +132,10 @@ public class OnboardingApp {
 
         deviceInfo.setWarehouse(warehouseInfo);
 
-        return "DEVICE {" + serialNumber + "}: DEVICE STORED IN WAREHOUSE\n\tSTATUS: " + deviceInfo.getCurrentState();
+        return outputString(serialNumber, deviceInfo, "DEVICE STORED IN WAREHOUSE");
+    }
+
+    private String outputString(String serialNumber, DeviceInfo deviceInfo, String message) {
+        return "DEVICE {" + serialNumber + "}: " + message + "\n\tSTATUS: " + deviceInfo.getCurrentState();
     }
 }
