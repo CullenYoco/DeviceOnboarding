@@ -5,9 +5,11 @@ import java.util.NoSuchElementException;
 public class OnboardingApp {
     MockDeviceDB mockDB = new MockDeviceDB();
     MockDeviceFlash mockDeviceFlash;
+    MockKeyInjector mockKeyInjector;
 
     public OnboardingApp() {
         mockDeviceFlash = new MockDeviceFlash(0);
+        mockKeyInjector = new MockKeyInjector(0);
     }
 
     public String processRequest(String requestString) {
@@ -31,6 +33,10 @@ public class OnboardingApp {
 
         if (splitRequest[0].equals("/flash")) {
             return flashDevice(splitRequest[1]);
+        }
+
+        if (splitRequest[0].equals("/key")) {
+            return injectKey(splitRequest[1]);
         }
         
         return getDeviceInfo(splitRequest[1]);
@@ -89,5 +95,16 @@ public class OnboardingApp {
         }
 
         return "DEVICE {" + serialNumber + "}: DEVICE FLASHED\n\tSTATUS: " + deviceInfo.getCurrentState();
+    }
+
+    private String injectKey(String serialNumber) {
+        DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
+        byte key[] = new byte[128];
+
+        if (mockKeyInjector.injectKey(key)) {
+            deviceInfo.injectKey(key);
+        }
+
+        return "DEVICE {" + serialNumber + "}: KEY INJECTED\n\tSTATUS: " + deviceInfo.getCurrentState();
     }
 }

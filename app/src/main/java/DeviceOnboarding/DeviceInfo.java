@@ -1,5 +1,7 @@
 package DeviceOnboarding;
 
+import java.util.Arrays;
+
 public class DeviceInfo {
     private String serialNumber = null;
     private String boxReference = null;
@@ -7,7 +9,7 @@ public class DeviceInfo {
     private DamageRating damage = null;
     private SIMCardInfo simCardInfo = null;
     private boolean isFlashed = false;
-    private boolean isKeyInjected = false;
+    private byte key[];
     private boolean isSentForRepack = false;
     private WarehouseInfo warehouseInfo = null;
     private DeviceState currentState;
@@ -36,6 +38,10 @@ public class DeviceInfo {
         return simCardInfo;
     }
 
+    public byte[] getKey() {
+        return key;
+    }
+
     public WarehouseInfo getWarehouseInfo() {
         return warehouseInfo;
     }
@@ -46,10 +52,6 @@ public class DeviceInfo {
 
     public boolean isFlashed() {
         return isFlashed;
-    }
-
-    public boolean isKeyInjected() {
-        return isKeyInjected;
     }
 
     public boolean isSentForRepack() {
@@ -87,6 +89,12 @@ public class DeviceInfo {
         currentState = DeviceState.FLASHED;
     }
 
+    public void injectKey(byte[] key) {
+        this.key = key;
+
+        currentState = DeviceState.KEY_INJECTED;
+    }
+
     public void setWarehouse(WarehouseInfo warehouseInfo) {
         this.warehouseInfo = warehouseInfo;
     }
@@ -103,7 +111,7 @@ public class DeviceInfo {
         out += "\n\t\tIMSI: " + simCardInfo.getIMSI();
         out += "\n\t\tIMEI: " + simCardInfo.getIMEI();
         out += "\n\tFLASHED: " + isFlashed;
-        out += "\n\tKEY INJECTED: " + isKeyInjected;
+        out += "\n\tKEY: " + Arrays.toString(key);
         out += "\n\tSENT FOR REPACK: " + isSentForRepack;
         out += "\n\tWAREHOUSE:\n\t\t" + warehouseInfo;
         out += "\n\tSTATE: " + currentState + "\n";
