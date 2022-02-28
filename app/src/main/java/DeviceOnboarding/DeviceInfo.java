@@ -95,6 +95,12 @@ public class DeviceInfo {
         currentState = DeviceState.KEY_INJECTED;
     }
 
+    public void sendForRepack() {
+        this.isSentForRepack = true;
+
+        currentState = DeviceState.SENT_FOR_REPACK;
+    }
+
     public void setWarehouse(WarehouseInfo warehouseInfo) {
         this.warehouseInfo = warehouseInfo;
     }

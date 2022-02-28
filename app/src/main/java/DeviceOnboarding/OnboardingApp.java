@@ -38,6 +38,10 @@ public class OnboardingApp {
         if (splitRequest[0].equals("/key")) {
             return injectKey(splitRequest[1]);
         }
+
+        if (splitRequest[0].equals("/repack")) {
+            return repackDevice(splitRequest[1]);
+        }
         
         return getDeviceInfo(splitRequest[1]);
     }
@@ -106,5 +110,13 @@ public class OnboardingApp {
         }
 
         return "DEVICE {" + serialNumber + "}: KEY INJECTED\n\tSTATUS: " + deviceInfo.getCurrentState();
+    }
+
+    private String repackDevice(String serialNumber) {
+        DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
+
+        deviceInfo.sendForRepack();
+
+        return "DEVICE {" + serialNumber + "}: DEVICE SENT FOR REPACK\n\tSTATUS: " + deviceInfo.getCurrentState();
     }
 }
