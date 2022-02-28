@@ -16,4 +16,28 @@ public class WarehouseInfo {
         this.segmentNumber = segmentNumber;
         this.segmentPosition = segmentPosition;
     }
+
+    public int getWarehouseNumber() {
+        return warehouseNumber;
+    }
+
+    public int getSectionNumber() {
+        return sectionNumber;
+    }
+
+    public int getRowNumber() {
+        return rowNumber;
+    }
+
+    public int getShelfNumber() {
+        return shelfNumber;
+    }
+
+    public int getSegmentNumber() {
+        return segmentNumber;
+    }
+
+    public SegmentPosition getSegmentPosition() {
+        return segmentPosition;
+    }
 }

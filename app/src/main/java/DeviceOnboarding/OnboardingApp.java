@@ -42,6 +42,11 @@ public class OnboardingApp {
         if (splitRequest[0].equals("/repack")) {
             return repackDevice(splitRequest[1]);
         }
+
+        if (splitRequest[0].equals("/store")) {
+            return storeDevice(splitRequest[1], splitRequest[2], splitRequest[3], splitRequest[4], splitRequest[5], 
+                               splitRequest[6], splitRequest[7], splitRequest[8]);
+        }
         
         return getDeviceInfo(splitRequest[1]);
     }
@@ -118,5 +123,15 @@ public class OnboardingApp {
         deviceInfo.sendForRepack();
 
         return "DEVICE {" + serialNumber + "}: DEVICE SENT FOR REPACK\n\tSTATUS: " + deviceInfo.getCurrentState();
+    }
+
+    private String storeDevice(String serialNumber, String warehouseNo, String sectionNo, String rowNo, String shelfNo,
+            String segmentNo, String ySegmentPos, String xSegmentPos) {
+        DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
+        WarehouseInfo warehouseInfo = new WarehouseInfo(Integer.parseInt(warehouseNo), Integer.parseInt(sectionNo), Integer.parseInt(rowNo), Integer.parseInt(shelfNo), Integer.parseInt(segmentNo), SegmentPosition.FRONTLEFT);
+
+        deviceInfo.setWarehouse(warehouseInfo);
+
+        return "DEVICE {" + serialNumber + "}: DEVICE STORED IN WAREHOUSE\n\tSTATUS: " + deviceInfo.getCurrentState();
     }
 }

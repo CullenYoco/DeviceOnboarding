@@ -103,6 +103,8 @@ public class DeviceInfo {
 
     public void setWarehouse(WarehouseInfo warehouseInfo) {
         this.warehouseInfo = warehouseInfo;
+
+        currentState = DeviceState.STORED_IN_WAREHOUSE;
     }
 
     @Override
@@ -119,7 +121,13 @@ public class DeviceInfo {
         out += "\n\tFLASHED: " + isFlashed;
         out += "\n\tKEY: " + Arrays.toString(key);
         out += "\n\tSENT FOR REPACK: " + isSentForRepack;
-        out += "\n\tWAREHOUSE:\n\t\t" + warehouseInfo;
+        out += "\n\tWAREHOUSE:";
+        out += "\n\t\tWAREHOUSE NUMBER: " + warehouseInfo.getWarehouseNumber();
+        out += "\n\t\tSECTION NUMBER: " + warehouseInfo.getSectionNumber();
+        out += "\n\t\tROW NUMBER: " + warehouseInfo.getRowNumber();
+        out += "\n\t\tSHELF NUMBER: " + warehouseInfo.getShelfNumber();
+        out += "\n\t\tSEGMENT NUMBER: " + warehouseInfo.getSegmentNumber();
+        out += "\n\t\tSEGMENT POSITION: " + warehouseInfo.getSegmentPosition();
         out += "\n\tSTATE: " + currentState + "\n";
 
         return out;
