@@ -10,4 +10,16 @@ public class SIMCardInfo {
         this.IMSI = IMSI;
         this.IMEI = IMEI;
     }
+
+    public String getSNN() {
+        return SNN;
+    }
+
+    public String getIMSI() {
+        return IMSI;
+    }
+
+    public String getIMEI() {
+        return IMEI;
+    }
 }
