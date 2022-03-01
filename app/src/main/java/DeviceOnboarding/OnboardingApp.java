@@ -3,6 +3,7 @@ package DeviceOnboarding;
 import java.util.NoSuchElementException;
 
 import DeviceOnboarding.MockDeviceFlash.FlashFailureException;
+import DeviceOnboarding.MockKeyInjector.InjectionFailureException;
 
 public class OnboardingApp {
     MockDeviceDB mockDB = new MockDeviceDB();
@@ -110,12 +111,12 @@ public class OnboardingApp {
             if (mockDeviceFlash.flashDevice()) {
                 deviceInfo.flashDevice();
             } else {
-                return "WARNING -> DEVICE {" + serialNumber + "}: DEVICE FLASH FAILED\n\tSTATUS: " + deviceInfo.getCurrentState();
+                return warningOutputString(serialNumber, deviceInfo, "DEVICE FLASH FAILED");
             }
         } catch (FlashFailureException e) {
             deviceInfo.flashFailure();
 
-            return "ERROR -> DEVICE {" + serialNumber + "}: (CATASTROPHIC) DEVICE FLASH FAILED\n\tSTATUS: " + deviceInfo.getCurrentState();
+            return errorOutputString(serialNumber, deviceInfo, "(CATASTROPHIC) DEVICE FLASH FAILED");
         }
 
         return outputString(serialNumber, deviceInfo, "DEVICE FLASHED");
@@ -125,8 +126,16 @@ public class OnboardingApp {
         DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
         byte key[] = new byte[128];
 
-        if (mockKeyInjector.injectKey(key)) {
-            deviceInfo.injectKey(key);
+        try {
+            if (mockKeyInjector.injectKey(key)) {
+                deviceInfo.injectKey(key);
+            } else {
+                return warningOutputString(serialNumber, deviceInfo, "KEY INJECTION FAILED");
+            }
+        } catch (InjectionFailureException e) {
+            deviceInfo.injectionFailure();
+
+            return errorOutputString(serialNumber, deviceInfo, "(CATASTROPHIC) KEY INJECTION FAILED");
         }
 
         return outputString(serialNumber, deviceInfo, "KEY INJECTED");
@@ -152,5 +161,13 @@ public class OnboardingApp {
 
     private String outputString(String serialNumber, DeviceInfo deviceInfo, String message) {
         return "DEVICE {" + serialNumber + "}: " + message + "\n\tSTATUS: " + deviceInfo.getCurrentState();
+    }
+
+    private String warningOutputString(String serialNumber, DeviceInfo deviceInfo, String message) {
+        return "WARNING -> " + outputString(serialNumber, deviceInfo, message);
+    }
+
+    private String errorOutputString(String serialNumber, DeviceInfo deviceInfo, String message) {
+        return "ERROR -> " + outputString(serialNumber, deviceInfo, message);
     }
 }

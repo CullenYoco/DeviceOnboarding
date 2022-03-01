@@ -115,6 +115,10 @@ public class DeviceInfo {
         currentState = DeviceState.SEVERE_FLASH_FAILURE;
     }
 
+    public void injectionFailure() {
+        currentState = DeviceState.SEVERE_KEY_INJECTION_FAILURE;
+    }
+
     @Override
     public String toString() {
         String out = "DEVICE {" + serialNumber + "}:";
