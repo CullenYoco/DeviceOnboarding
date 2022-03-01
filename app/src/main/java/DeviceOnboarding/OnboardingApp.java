@@ -125,6 +125,8 @@ public class OnboardingApp {
             deviceInfo.flashFailure();
 
             return errorOutputString(serialNumber, deviceInfo, "(CATASTROPHIC) DEVICE FLASH FAILED");
+        } catch (IllegalStateException e) {
+            return transitionExceptionOutputString(serialNumber, deviceInfo, e);
         }
 
         return outputString(serialNumber, deviceInfo, "DEVICE FLASHED");

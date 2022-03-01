@@ -96,6 +96,10 @@ public class DeviceInfo {
     }
 
     public void flashDevice() {
+        if (currentState != DeviceState.SIM_INSERTED_AND_RECORDED) {
+            throw new IllegalStateException(DeviceState.FLASHED + "");
+        }
+
         this.isFlashed = true;
 
         currentState = DeviceState.FLASHED;
