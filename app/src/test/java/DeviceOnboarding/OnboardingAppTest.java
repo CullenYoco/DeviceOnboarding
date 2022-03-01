@@ -28,7 +28,7 @@ class OnboardingAppTest {
         expectedDeviceInfo.injectKey(new byte[128]);
         expectedDeviceInfo.sendForRepack();
 
-        WarehouseInfo warehouseInfo = new WarehouseInfo(1, 1, 1, 1, 1, SegmentPosition.FRONTLEFT);
+        WarehouseInfo warehouseInfo = new WarehouseInfo(1, 1, 1, 1, 1, SegmentPosition.FRONT_LEFT);
         expectedDeviceInfo.setWarehouse(warehouseInfo);
 
         assertEquals("DEVICE {2049-3630}: DEVICE ADDED\n\tSTATUS: SERIAL_NUMBER_RECORDED",
@@ -156,6 +156,15 @@ class OnboardingAppTest {
         damageRatingTest(DamageRating.UNUSABLE, "UnUsaBLe");
     }
 
+    @Test
+    public void differentSegmentPositionTest() {
+        segmentPositionTest(SegmentPosition.BACK_CENTRE, "back centre");
+        segmentPositionTest(SegmentPosition.BACK_LEFT, "bAcK LeFt");
+        segmentPositionTest(SegmentPosition.BACK_RIGHT, "BACK right");
+        segmentPositionTest(SegmentPosition.FRONT_CENTRE, "front CENTRE");
+        segmentPositionTest(SegmentPosition.FRONT_RIGHT, "FRONT RIGHT");
+    }
+
     private void damageRatingTest(DamageRating damageRating, String testString) {
         oa = new OnboardingApp();
 
@@ -166,6 +175,33 @@ class OnboardingAppTest {
         oa.processRequest("/add 2049-3630");
         oa.processRequest("/delivery 2049-3630 boxRefNo crateRefNo");
         oa.processRequest("/damage 2049-3630 " + testString);
+
+        assertEquals(expectedDeviceInfo.toString(), oa.processRequest("/info 2049-3630"));
+    }
+
+    private void segmentPositionTest(SegmentPosition segmentPosition, String testString) {
+        oa = new OnboardingApp();
+
+        DeviceInfo expectedDeviceInfo = new DeviceInfo();
+        expectedDeviceInfo.setSerialNumber("2049-3630");
+        expectedDeviceInfo.setDeliveryInfo("boxRefNo", "crateRefNo");
+        expectedDeviceInfo.setDamage(DamageRating.LIGHT);
+        expectedDeviceInfo.setSIMCard(new SIMCardInfo("SNN", "IMSI", "IMEI"));
+        expectedDeviceInfo.flashDevice();
+        expectedDeviceInfo.injectKey(new byte[128]);
+        expectedDeviceInfo.sendForRepack();
+
+        WarehouseInfo warehouseInfo = new WarehouseInfo(1, 1, 1, 1, 1, segmentPosition);
+        expectedDeviceInfo.setWarehouse(warehouseInfo);
+
+        oa.processRequest("/add 2049-3630");
+        oa.processRequest("/delivery 2049-3630 boxRefNo crateRefNo");
+        oa.processRequest("/damage 2049-3630 light");
+        oa.processRequest("/sim 2049-3630 SNN IMSI IMEI");
+        oa.processRequest("/flash 2049-3630");
+        oa.processRequest("/key 2049-3630");
+        oa.processRequest("/repack 2049-3630");
+        oa.processRequest("/store 2049-3630 1 1 1 1 1 " + testString);
 
         assertEquals(expectedDeviceInfo.toString(), oa.processRequest("/info 2049-3630"));
     }

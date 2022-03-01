@@ -171,11 +171,24 @@ public class OnboardingApp {
 
     private String storeDevice(DeviceInfo deviceInfo, String warehouseNo, String sectionNo, String rowNo, String shelfNo,
             String segmentNo, String ySegmentPos, String xSegmentPos) {
-        WarehouseInfo warehouseInfo = new WarehouseInfo(Integer.parseInt(warehouseNo), Integer.parseInt(sectionNo), Integer.parseInt(rowNo), Integer.parseInt(shelfNo), Integer.parseInt(segmentNo), SegmentPosition.FRONTLEFT);
+        WarehouseInfo warehouseInfo;
+        
+        try {
+            warehouseInfo = new WarehouseInfo(Integer.parseInt(warehouseNo), Integer.parseInt(sectionNo),
+                                                            Integer.parseInt(rowNo), Integer.parseInt(shelfNo),
+                                                            Integer.parseInt(segmentNo), stringToSegmentPosition(ySegmentPos, xSegmentPos));
+        } catch (IllegalArgumentException e) {
+            return errorOutputString(deviceInfo, "SEGMENT POSITION INVALID {" + ySegmentPos + ", " + xSegmentPos + "}" );
+        }
+        
 
         deviceInfo.setWarehouse(warehouseInfo);
 
         return outputString(deviceInfo, "DEVICE STORED IN WAREHOUSE");
+    }
+
+    private SegmentPosition stringToSegmentPosition(String xSegmentPos, String ySegmentPos) {
+        return SegmentPosition.valueOf((xSegmentPos + "_" + ySegmentPos).toUpperCase());
     }
 
     private String outputString(DeviceInfo deviceInfo, String message) {
