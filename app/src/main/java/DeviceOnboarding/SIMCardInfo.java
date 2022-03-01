@@ -22,4 +22,15 @@ public class SIMCardInfo {
     public String getIMEI() {
         return IMEI;
     }
+
+    @Override
+    public String toString() {
+        String out = "SIM CARD:";
+        
+        out += "\n\tSNN: " + SNN;
+        out += "\n\tIMSI: " + IMSI;
+        out += "\n\tIMEI: " + IMEI;
+        
+        return out;
+    }
 }

@@ -40,4 +40,18 @@ public class WarehouseInfo {
     public SegmentPosition getSegmentPosition() {
         return segmentPosition;
     }
+
+    @Override
+    public String toString() {
+        String out = "WAREHOUSE: ";
+
+        out += "\n\tWAREHOUSE NUMBER: " + warehouseNumber;
+        out += "\n\tSECTION NUMBER: " + sectionNumber;
+        out += "\n\tROW NUMBER: " + rowNumber;
+        out += "\n\tSHELF NUMBER: " + shelfNumber;
+        out += "\n\tSEGMENT NUMBER: " + segmentNumber;
+        out += "\n\tSEGMENT POSITION: " + segmentPosition;
+
+        return out;
+    }
 }

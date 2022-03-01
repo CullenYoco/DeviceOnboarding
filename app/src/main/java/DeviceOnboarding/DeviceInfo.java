@@ -149,26 +149,17 @@ public class DeviceInfo {
 
     @Override
     public String toString() {
-        String out = "DEVICE {" + serialNumber + "}:";
+        String out = "===DEVICE {" + serialNumber + "}===";
 
-        out += "\n\tBOX: " + boxReference;
-        out += "\n\tCRATE: " + crateReference;
-        out += "\n\tDAMAGE: " + damage;
-        out += "\n\tSIM CARD:";
-        out += "\n\t\tSNN: " + simCardInfo.getSNN();
-        out += "\n\t\tIMSI: " + simCardInfo.getIMSI();
-        out += "\n\t\tIMEI: " + simCardInfo.getIMEI();
-        out += "\n\tFLASHED: " + isFlashed;
-        out += "\n\tKEY: " + Arrays.toString(key);
-        out += "\n\tSENT FOR REPACK: " + isSentForRepack;
-        out += "\n\tWAREHOUSE:";
-        out += "\n\t\tWAREHOUSE NUMBER: " + warehouseInfo.getWarehouseNumber();
-        out += "\n\t\tSECTION NUMBER: " + warehouseInfo.getSectionNumber();
-        out += "\n\t\tROW NUMBER: " + warehouseInfo.getRowNumber();
-        out += "\n\t\tSHELF NUMBER: " + warehouseInfo.getShelfNumber();
-        out += "\n\t\tSEGMENT NUMBER: " + warehouseInfo.getSegmentNumber();
-        out += "\n\t\tSEGMENT POSITION: " + warehouseInfo.getSegmentPosition();
-        out += "\n\tSTATE: " + currentState + "\n";
+        out += "\nBOX: " + boxReference;
+        out += "\nCRATE: " + crateReference;
+        out += "\nDAMAGE: " + damage;
+        out += "\n" + simCardInfo;
+        out += "\nFLASHED: " + isFlashed;
+        out += "\nKEY: " + Arrays.toString(key);
+        out += "\nSENT FOR REPACK: " + isSentForRepack;
+        out += "\n" + warehouseInfo;
+        out += "\nSTATE: " + currentState;
 
         return out;
     }
