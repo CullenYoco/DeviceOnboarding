@@ -93,7 +93,7 @@ public class OnboardingApp {
         try {
             deviceInfo.setDamage(DamageRating.LIGHT); // ??
         } catch (IllegalStateException e) {
-            return warningOutputString(serialNumber, deviceInfo, "ILLEGAL STATE TRANSITION (" + deviceInfo.getCurrentState() + " -> " + e.getMessage() + ")");
+            return transitionExceptionOutputString(serialNumber, deviceInfo, e);
         }
 
         return outputString(serialNumber, deviceInfo, "DAMAGE ADDED");
@@ -103,7 +103,11 @@ public class OnboardingApp {
         DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
         SIMCardInfo simCard = new SIMCardInfo(SNN, IMSI, IMEI);
 
-        deviceInfo.setSIMCard(simCard);
+        try {
+            deviceInfo.setSIMCard(simCard);
+        } catch (IllegalStateException e) {
+            return transitionExceptionOutputString(serialNumber, deviceInfo, e);
+        }
 
         return outputString(serialNumber, deviceInfo, "SIM ADDED");
     }
@@ -173,5 +177,9 @@ public class OnboardingApp {
 
     private String errorOutputString(String serialNumber, DeviceInfo deviceInfo, String message) {
         return "ERROR -> " + outputString(serialNumber, deviceInfo, message);
+    }
+
+    private String transitionExceptionOutputString(String serialNumber, DeviceInfo deviceInfo, IllegalStateException e) {
+        return warningOutputString(serialNumber, deviceInfo, "ILLEGAL STATE TRANSITION (" + deviceInfo.getCurrentState() + " -> " + e.getMessage() + ")");
     }
 }

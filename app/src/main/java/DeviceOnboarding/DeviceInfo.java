@@ -86,6 +86,10 @@ public class DeviceInfo {
     }
 
     public void setSIMCard(SIMCardInfo simCard) {
+        if (currentState != DeviceState.DAMAGE_RECORDED) {
+            throw new IllegalStateException(DeviceState.SIM_INSERTED_AND_RECORDED + "");
+        }
+
         this.simCardInfo = simCard;
 
         currentState = DeviceState.SIM_INSERTED_AND_RECORDED;
