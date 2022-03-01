@@ -1,6 +1,7 @@
 package DeviceOnboarding;
 
 import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 import DeviceOnboarding.MockDeviceFlash.FlashFailureException;
 import DeviceOnboarding.MockKeyInjector.InjectionFailureException;
@@ -9,6 +10,23 @@ public class OnboardingApp {
     MockDeviceDB mockDB = new MockDeviceDB();
     MockDeviceFlash mockDeviceFlash;
     MockKeyInjector mockKeyInjector;
+
+    public static void main(String[] args) {
+        OnboardingApp oa = new OnboardingApp();
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            String requestString = scanner.nextLine();
+
+            if (requestString.equals("/quit") || requestString.equals("/q")) {
+                break;
+            }
+
+            System.out.println(oa.processRequest(requestString));
+        }
+
+        scanner.close();
+    }
 
     public OnboardingApp() {
         this(new MockDeviceFlash(0), new MockKeyInjector(0));

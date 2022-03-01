@@ -5,7 +5,7 @@
 ### Running the Onboarding App
 
 ```bash
-./gradlew run
+./gradlew run --console=plain
 ```
 
 ### Running the Test Suite
