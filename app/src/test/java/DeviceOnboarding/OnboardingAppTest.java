@@ -147,4 +147,26 @@ class OnboardingAppTest {
         oa.processRequest("/add 2049-3630");
         assertEquals("ERROR -> ILLEGAL REQUEST FORMAT\n\tUNRECOGNIZED COMMAND: /test", oa.processRequest("/test 2049-3630"));
     }
+
+    @Test
+    public void differentDamageRatingTest() {
+        damageRatingTest(DamageRating.NONE, "none");
+        damageRatingTest(DamageRating.MODERATE, "moderate");
+        damageRatingTest(DamageRating.HIGH, "HIGH");
+        damageRatingTest(DamageRating.UNUSABLE, "UnUsaBLe");
+    }
+
+    private void damageRatingTest(DamageRating damageRating, String testString) {
+        oa = new OnboardingApp();
+
+        DeviceInfo expectedDeviceInfo = new DeviceInfo();
+        expectedDeviceInfo.setSerialNumber("2049-3630");
+        expectedDeviceInfo.setDeliveryInfo("boxRefNo", "crateRefNo");
+        expectedDeviceInfo.setDamage(damageRating);
+        oa.processRequest("/add 2049-3630");
+        oa.processRequest("/delivery 2049-3630 boxRefNo crateRefNo");
+        oa.processRequest("/damage 2049-3630 " + testString);
+
+        assertEquals(expectedDeviceInfo.toString(), oa.processRequest("/info 2049-3630"));
+    }
 }

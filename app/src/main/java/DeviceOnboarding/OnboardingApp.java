@@ -107,9 +107,18 @@ public class OnboardingApp {
     }
 
     private String addDamage(DeviceInfo deviceInfo, String damage) {
-        deviceInfo.setDamage(DamageRating.LIGHT); // ??
+        try {
+            deviceInfo.setDamage(stringToDamageRating(damage)); // ??
+        } catch (IllegalArgumentException e) {
+            return errorOutputString(deviceInfo, "DAMAGE STATUS INVALID {" + damage + "}" );
+        }
+        
 
         return outputString(deviceInfo, "DAMAGE ADDED");
+    }
+
+    private DamageRating stringToDamageRating(String damage) {
+        return DamageRating.valueOf(damage.toUpperCase());
     }
 
     private String addSIM(DeviceInfo deviceInfo, String SNN, String IMSI, String IMEI) {
