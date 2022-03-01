@@ -11,8 +11,7 @@ public class OnboardingApp {
     MockKeyInjector mockKeyInjector;
 
     public OnboardingApp() {
-        mockDeviceFlash = new MockDeviceFlash(0);
-        mockKeyInjector = new MockKeyInjector(0);
+        this(new MockDeviceFlash(0), new MockKeyInjector(0));
     }
 
     public OnboardingApp(MockDeviceFlash mockDeviceFlash, MockKeyInjector mockKeyInjector) {
@@ -27,54 +26,68 @@ public class OnboardingApp {
             return illegalRequestOutputString();
         }
 
-        if (splitRequest[0].equals("/add")) {
-            return addDevice(splitRequest[1]);
-        }
-        
-        if (splitRequest[0].equals("/delivery")) {
-            return addDeliveryInfo(splitRequest[1], splitRequest[2], splitRequest[3]);
-        }
-        
-        if (splitRequest[0].equals("/damage")) {
-            return addDamage(splitRequest[1], splitRequest[2]);
-        }
-
-        if (splitRequest[0].equals("/sim")) {
-            return addSIM(splitRequest[1], splitRequest[2], splitRequest[3], splitRequest[4]);
-        }
-
-        if (splitRequest[0].equals("/flash")) {
-            return flashDevice(splitRequest[1]);
-        }
-
-        if (splitRequest[0].equals("/key")) {
-            return injectKey(splitRequest[1]);
-        }
-
-        if (splitRequest[0].equals("/repack")) {
-            return repackDevice(splitRequest[1]);
-        }
-
-        if (splitRequest[0].equals("/store")) {
-            return storeDevice(splitRequest[1], splitRequest[2], splitRequest[3], splitRequest[4], splitRequest[5], 
-                               splitRequest[6], splitRequest[7], splitRequest[8]);
-        }
-
-        if (splitRequest[0].equals("/info")) {
-            return getDeviceInfo(splitRequest[1]);
-        }
-        
-        return illegalRequestOutputString() + "\n\tUNRECOGNIZED COMMAND: " + splitRequest[0];
+        return handleRequest(splitRequest);
     }
 
-    private String getDeviceInfo(String serialNumber) {
-        DeviceInfo deviceInfo;
+    private String handleRequest(String[] requestArgs) {
+        String command = requestArgs[0];
+        String serialNumber = requestArgs[1];
+        DeviceInfo deviceInfo = null;
+
+        if (command.equals("/add")) {
+            return addDevice(serialNumber);
+        }
 
         try {
             deviceInfo = mockDB.getDevice(serialNumber);
+
+            if (command.equals("/delivery")) {
+                return addDeliveryInfo(deviceInfo, requestArgs[2], requestArgs[3]);
+            }
+
+            if (command.equals("/damage")) {
+                return addDamage(deviceInfo, requestArgs[2]);
+            }
+
+            if (command.equals("/sim")) {
+                return addSIM(deviceInfo, requestArgs[2], requestArgs[3], requestArgs[4]);
+            }
+
+            if (command.equals("/flash")) {
+                return flashDevice(deviceInfo);
+            }
+
+            if (command.equals("/key")) {
+                return injectKey(deviceInfo);
+            }
+
+            if (command.equals("/repack")) {
+                return repackDevice(deviceInfo);
+            }
+
+            if (command.equals("/store")) {
+                return storeDevice(deviceInfo, requestArgs[2], requestArgs[3], requestArgs[4], requestArgs[5], 
+                                   requestArgs[6], requestArgs[7], requestArgs[8]);
+            }
+
+            if (command.equals("/info")) {
+                return getDeviceInfo(requestArgs[1]);
+            }
         } catch (NoSuchElementException e) {
             return "ERROR -> DEVICE {" + serialNumber + "}: Device NOT Found";
+        } catch (IllegalStateException e) {
+            return transitionExceptionOutputString(deviceInfo, e);
         }
+
+        return unrecognizedCommandOutputString(command);
+    }
+
+    private String unrecognizedCommandOutputString(String command) {
+        return illegalRequestOutputString() + "\n\tUNRECOGNIZED COMMAND: " + command;
+    }
+
+    private String getDeviceInfo(String serialNumber) {
+        DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
 
         return deviceInfo.toString();
     }
@@ -84,127 +97,92 @@ public class OnboardingApp {
         deviceInfo.setSerialNumber(serialNumber);
 
         mockDB.addDevice(deviceInfo);
-        return outputString(serialNumber, deviceInfo, "DEVICE ADDED");
+        return outputString(deviceInfo, "DEVICE ADDED");
     }
 
-    private String addDeliveryInfo(String serialNumber, String boxReference, String crateReference) {
-        DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
+    private String addDeliveryInfo(DeviceInfo deviceInfo, String boxReference, String crateReference) {
+        deviceInfo.setDeliveryInfo(boxReference, crateReference);
 
-        try {
-            deviceInfo.setDeliveryInfo(boxReference, crateReference);
-        } catch (IllegalStateException e) {
-            return transitionExceptionOutputString(serialNumber, deviceInfo, e);
-        }
-
-        return outputString(serialNumber, deviceInfo, "DELIVERY INFO ADDED");
+        return outputString(deviceInfo, "DELIVERY INFO ADDED");
     }
 
-    private String addDamage(String serialNumber, String damage) {
-        DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
+    private String addDamage(DeviceInfo deviceInfo, String damage) {
+        deviceInfo.setDamage(DamageRating.LIGHT); // ??
 
-        try {
-            deviceInfo.setDamage(DamageRating.LIGHT); // ??
-        } catch (IllegalStateException e) {
-            return transitionExceptionOutputString(serialNumber, deviceInfo, e);
-        }
-
-        return outputString(serialNumber, deviceInfo, "DAMAGE ADDED");
+        return outputString(deviceInfo, "DAMAGE ADDED");
     }
 
-    private String addSIM(String serialNumber, String SNN, String IMSI, String IMEI) {
-        DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
+    private String addSIM(DeviceInfo deviceInfo, String SNN, String IMSI, String IMEI) {
         SIMCardInfo simCard = new SIMCardInfo(SNN, IMSI, IMEI);
 
-        try {
-            deviceInfo.setSIMCard(simCard);
-        } catch (IllegalStateException e) {
-            return transitionExceptionOutputString(serialNumber, deviceInfo, e);
-        }
+        deviceInfo.setSIMCard(simCard);
 
-        return outputString(serialNumber, deviceInfo, "SIM ADDED");
+        return outputString(deviceInfo, "SIM ADDED");
     }
 
-    private String flashDevice(String serialNumber) {
-        DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
-
+    private String flashDevice(DeviceInfo deviceInfo) {
          try {
             if (mockDeviceFlash.flashDevice()) {
                 deviceInfo.flashDevice();
             } else {
-                return warningOutputString(serialNumber, deviceInfo, "DEVICE FLASH FAILED");
+                return warningOutputString(deviceInfo, "DEVICE FLASH FAILED");
             }
         } catch (FlashFailureException e) {
             deviceInfo.flashFailure();
 
-            return errorOutputString(serialNumber, deviceInfo, "(CATASTROPHIC) DEVICE FLASH FAILED");
-        } catch (IllegalStateException e) {
-            return transitionExceptionOutputString(serialNumber, deviceInfo, e);
+            return errorOutputString(deviceInfo, "(CATASTROPHIC) DEVICE FLASH FAILED");
         }
 
-        return outputString(serialNumber, deviceInfo, "DEVICE FLASHED");
+        return outputString(deviceInfo, "DEVICE FLASHED");
     }
 
-    private String injectKey(String serialNumber) {
-        DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
+    private String injectKey(DeviceInfo deviceInfo) {
         byte key[] = new byte[128];
 
         try {
             if (mockKeyInjector.injectKey(key)) {
                 deviceInfo.injectKey(key);
             } else {
-                return warningOutputString(serialNumber, deviceInfo, "KEY INJECTION FAILED");
+                return warningOutputString(deviceInfo, "KEY INJECTION FAILED");
             }
         } catch (InjectionFailureException e) {
             deviceInfo.injectionFailure();
 
-            return errorOutputString(serialNumber, deviceInfo, "(CATASTROPHIC) KEY INJECTION FAILED");
-        } catch (IllegalStateException e) {
-            return transitionExceptionOutputString(serialNumber, deviceInfo, e);
+            return errorOutputString(deviceInfo, "(CATASTROPHIC) KEY INJECTION FAILED");
         }
 
-        return outputString(serialNumber, deviceInfo, "KEY INJECTED");
+        return outputString(deviceInfo, "KEY INJECTED");
     }
 
-    private String repackDevice(String serialNumber) {
-        DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
+    private String repackDevice(DeviceInfo deviceInfo) {
+        deviceInfo.sendForRepack();
 
-        try {
-            deviceInfo.sendForRepack();
-        } catch (IllegalStateException e) {
-            return transitionExceptionOutputString(serialNumber, deviceInfo, e);
-        }
-
-        return outputString(serialNumber, deviceInfo, "DEVICE SENT FOR REPACK");
+        return outputString(deviceInfo, "DEVICE SENT FOR REPACK");
     }
 
-    private String storeDevice(String serialNumber, String warehouseNo, String sectionNo, String rowNo, String shelfNo,
+    private String storeDevice(DeviceInfo deviceInfo, String warehouseNo, String sectionNo, String rowNo, String shelfNo,
             String segmentNo, String ySegmentPos, String xSegmentPos) {
-        DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
         WarehouseInfo warehouseInfo = new WarehouseInfo(Integer.parseInt(warehouseNo), Integer.parseInt(sectionNo), Integer.parseInt(rowNo), Integer.parseInt(shelfNo), Integer.parseInt(segmentNo), SegmentPosition.FRONTLEFT);
 
-        try {
-            deviceInfo.setWarehouse(warehouseInfo);
-        } catch (IllegalStateException e) {
-            return transitionExceptionOutputString(serialNumber, deviceInfo, e);
-        }
+        deviceInfo.setWarehouse(warehouseInfo);
 
-        return outputString(serialNumber, deviceInfo, "DEVICE STORED IN WAREHOUSE");
+        return outputString(deviceInfo, "DEVICE STORED IN WAREHOUSE");
     }
 
-    private String outputString(String serialNumber, DeviceInfo deviceInfo, String message) {
-        return "DEVICE {" + serialNumber + "}: " + message + "\n\tSTATUS: " + deviceInfo.getCurrentState();
+    private String outputString(DeviceInfo deviceInfo, String message) {
+        return "DEVICE {" + deviceInfo.getSerialNumber() + "}: " + message + "\n\tSTATUS: " + deviceInfo.getCurrentState();
     }
 
-    private String warningOutputString(String serialNumber, DeviceInfo deviceInfo, String message) {
-        return "WARNING -> " + outputString(serialNumber, deviceInfo, message);
+    private String warningOutputString(DeviceInfo deviceInfo, String message) {
+        return "WARNING -> " + outputString(deviceInfo, message);
     }
 
-    private String errorOutputString(String serialNumber, DeviceInfo deviceInfo, String message) {
-        return "ERROR -> " + outputString(serialNumber, deviceInfo, message);
+    private String errorOutputString(DeviceInfo deviceInfo, String message) {
+        return "ERROR -> " + outputString(deviceInfo, message);
     }
 
-    private String transitionExceptionOutputString(String serialNumber, DeviceInfo deviceInfo, IllegalStateException e) {
-        return warningOutputString(serialNumber, deviceInfo, "ILLEGAL STATE TRANSITION (" + deviceInfo.getCurrentState() + " -> " + e.getMessage() + ")");
+    private String transitionExceptionOutputString(DeviceInfo deviceInfo, IllegalStateException e) {
+        return warningOutputString(deviceInfo, "ILLEGAL STATE TRANSITION (" + deviceInfo.getCurrentState() + " -> " + e.getMessage() + ")");
     }
 
     private String illegalRequestOutputString() {
