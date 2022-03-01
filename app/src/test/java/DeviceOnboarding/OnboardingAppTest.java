@@ -132,5 +132,10 @@ class OnboardingAppTest {
                       oa.processRequest("/repack 2049-3630"));
         assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DELIVERY_INFO_RECORDED -> STORED_IN_WAREHOUSE)\n\tSTATUS: DELIVERY_INFO_RECORDED",
                       oa.processRequest("/store 2049-3630 1 1 1 1 1 front left"));
+
+        oa.processRequest("/damage 2049-3630 light");
+
+        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DAMAGE_RECORDED -> DELIVERY_INFO_RECORDED)\n\tSTATUS: DAMAGE_RECORDED",
+                      oa.processRequest("/delivery 2049-3630 boxRefNo crateRefNo"));
     }
 }

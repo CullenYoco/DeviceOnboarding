@@ -82,7 +82,11 @@ public class OnboardingApp {
     private String addDeliveryInfo(String serialNumber, String boxReference, String crateReference) {
         DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
 
-        deviceInfo.setDeliveryInfo(boxReference, crateReference);
+        try {
+            deviceInfo.setDeliveryInfo(boxReference, crateReference);
+        } catch (IllegalStateException e) {
+            return transitionExceptionOutputString(serialNumber, deviceInfo, e);
+        }
 
         return outputString(serialNumber, deviceInfo, "DELIVERY INFO ADDED");
     }

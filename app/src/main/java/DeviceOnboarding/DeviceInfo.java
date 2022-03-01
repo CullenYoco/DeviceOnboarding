@@ -69,6 +69,10 @@ public class DeviceInfo {
     }
 
     public void setDeliveryInfo(String boxReference, String crateReference) {
+        if (currentState != DeviceState.SERIAL_NUMBER_RECORDED) {
+            throw new IllegalStateException(DeviceState.DELIVERY_INFO_RECORDED + "");
+        }
+
         this.boxReference = boxReference;
         this.crateReference = crateReference;
 
