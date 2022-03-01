@@ -59,6 +59,10 @@ public class DeviceInfo {
     }
 
     public void setSerialNumber(String serialNumber) {
+        if (!serialNumber.matches("[0-9]{4}-[0-9]{3}[0-9xX]")) {
+            throw new IllegalSerialNumberException();
+        }
+
         this.serialNumber = serialNumber;
 
         currentState = DeviceState.SERIAL_NUMBER_RECORDED;
@@ -132,4 +136,6 @@ public class DeviceInfo {
 
         return out;
     }
+
+    public class IllegalSerialNumberException extends RuntimeException{}
 }

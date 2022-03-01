@@ -1,6 +1,9 @@
 package DeviceOnboarding;
 
 import org.junit.jupiter.api.Test;
+
+import DeviceOnboarding.DeviceInfo.IllegalSerialNumberException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -51,5 +54,12 @@ class OnboardingAppTest {
     @Test
     public void getInfoOnNonExistentDeviceTest() {
         assertEquals("ERROR -> DEVICE {2049-3630}: Device NOT Found", oa.processRequest("/info 2049-3630"));
+    }
+
+    @Test
+    public void illegalSerialNumberTest() {
+        assertThrows(IllegalSerialNumberException.class, () -> {
+            oa.processRequest("/add 1234");
+        });
     }
 }
