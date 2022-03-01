@@ -69,4 +69,16 @@ public class MockDeviceDBTest {
             mdb.getDevice("2049-3631");
         });
     }
+
+    @Test
+    public void addExistingElementTest() {
+        DeviceInfo deviceInfo = new DeviceInfo();
+        deviceInfo.setSerialNumber("2049-3630");
+
+        mdb.addDevice(deviceInfo);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            mdb.addDevice(deviceInfo);
+        });
+    }
 }

@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 public class MockDeviceDB {
     ArrayList<DeviceInfo> deviceList = new ArrayList<DeviceInfo>();
 
-    public void addDevice(DeviceInfo deviceInfo) {
+    public void addDevice(DeviceInfo deviceInfo) throws IllegalArgumentException {
         if (isDeviceInfoIllegal(deviceInfo)) {
             throw new IllegalArgumentException();
         }
@@ -43,6 +43,6 @@ public class MockDeviceDB {
     }
 
     private boolean isDeviceInfoIllegal(DeviceInfo deviceInfo) {
-        return deviceInfo == null || deviceInfo.getSerialNumber() == null;
+        return deviceInfo == null || deviceInfo.getSerialNumber() == null || contains(deviceInfo.getSerialNumber());
     }
 }
