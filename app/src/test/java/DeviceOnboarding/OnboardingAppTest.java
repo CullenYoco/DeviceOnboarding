@@ -62,4 +62,44 @@ class OnboardingAppTest {
             oa.processRequest("/add 1234");
         });
     }
+
+    @Test
+    public void faultyFlashTest() {
+        OnboardingApp customOnboardingApp = new OnboardingApp(new MockDeviceFlash(1), new MockKeyInjector(0));
+        DeviceInfo expectedDeviceInfo = new DeviceInfo();
+        expectedDeviceInfo.setSerialNumber("2049-3630");
+        expectedDeviceInfo.setDeliveryInfo("boxRefNo", "crateRefNo");
+        expectedDeviceInfo.setDamage(DamageRating.LIGHT);
+        expectedDeviceInfo.setSIMCard(new SIMCardInfo("SNN", "IMSI", "IMEI"));
+        expectedDeviceInfo.flashDevice();
+
+        customOnboardingApp.processRequest("/add 2049-3630");
+        customOnboardingApp.processRequest("/delivery 2049-3630 boxRefNo crateRefNo");
+        customOnboardingApp.processRequest("/damage 2049-3630 light");
+        customOnboardingApp.processRequest("/sim 2049-3630 SNN IMSI IMEI");
+        
+        
+        assertEquals("WARNING -> DEVICE {2049-3630}: DEVICE FLASH FAILED\n\tSTATUS: SIM_INSERTED_AND_RECORDED",
+                     customOnboardingApp.processRequest("/flash 2049-3630"));
+    }
+
+    @Test
+    public void exceptionFaultFlashTest() {
+        OnboardingApp customOnboardingApp = new OnboardingApp(new MockDeviceFlash(-1), new MockKeyInjector(0));
+        DeviceInfo expectedDeviceInfo = new DeviceInfo();
+        expectedDeviceInfo.setSerialNumber("2049-3630");
+        expectedDeviceInfo.setDeliveryInfo("boxRefNo", "crateRefNo");
+        expectedDeviceInfo.setDamage(DamageRating.LIGHT);
+        expectedDeviceInfo.setSIMCard(new SIMCardInfo("SNN", "IMSI", "IMEI"));
+        expectedDeviceInfo.flashDevice();
+
+        customOnboardingApp.processRequest("/add 2049-3630");
+        customOnboardingApp.processRequest("/delivery 2049-3630 boxRefNo crateRefNo");
+        customOnboardingApp.processRequest("/damage 2049-3630 light");
+        customOnboardingApp.processRequest("/sim 2049-3630 SNN IMSI IMEI");
+        
+        
+        assertEquals("ERROR -> DEVICE {2049-3630}: (CATASTROPHIC) DEVICE FLASH FAILED\n\tSTATUS: SEVERE_FLASH_FAILURE",
+                     customOnboardingApp.processRequest("/flash 2049-3630"));
+    }
 }

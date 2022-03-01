@@ -2,6 +2,8 @@ package DeviceOnboarding;
 
 import java.util.NoSuchElementException;
 
+import DeviceOnboarding.MockDeviceFlash.FlashFailureException;
+
 public class OnboardingApp {
     MockDeviceDB mockDB = new MockDeviceDB();
     MockDeviceFlash mockDeviceFlash;
@@ -10,6 +12,11 @@ public class OnboardingApp {
     public OnboardingApp() {
         mockDeviceFlash = new MockDeviceFlash(0);
         mockKeyInjector = new MockKeyInjector(0);
+    }
+
+    public OnboardingApp(MockDeviceFlash mockDeviceFlash, MockKeyInjector mockKeyInjector) {
+        this.mockDeviceFlash = mockDeviceFlash;
+        this.mockKeyInjector = mockKeyInjector;
     }
 
     public String processRequest(String requestString) {
@@ -98,9 +105,17 @@ public class OnboardingApp {
 
     private String flashDevice(String serialNumber) {
         DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
-        
-        if (mockDeviceFlash.flashDevice()) {
-            deviceInfo.flashDevice();
+
+         try {
+            if (mockDeviceFlash.flashDevice()) {
+                deviceInfo.flashDevice();
+            } else {
+                return "WARNING -> DEVICE {" + serialNumber + "}: DEVICE FLASH FAILED\n\tSTATUS: " + deviceInfo.getCurrentState();
+            }
+        } catch (FlashFailureException e) {
+            deviceInfo.flashFailure();
+
+            return "ERROR -> DEVICE {" + serialNumber + "}: (CATASTROPHIC) DEVICE FLASH FAILED\n\tSTATUS: " + deviceInfo.getCurrentState();
         }
 
         return outputString(serialNumber, deviceInfo, "DEVICE FLASHED");

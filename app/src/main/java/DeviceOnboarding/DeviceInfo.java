@@ -111,6 +111,10 @@ public class DeviceInfo {
         currentState = DeviceState.STORED_IN_WAREHOUSE;
     }
 
+    public void flashFailure() {
+        currentState = DeviceState.SEVERE_FLASH_FAILURE;
+    }
+
     @Override
     public String toString() {
         String out = "DEVICE {" + serialNumber + "}:";
