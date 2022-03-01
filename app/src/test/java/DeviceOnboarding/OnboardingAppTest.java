@@ -112,4 +112,15 @@ class OnboardingAppTest {
         assertEquals("ERROR -> DEVICE {2049-3630}: (CATASTROPHIC) KEY INJECTION FAILED\n\tSTATUS: SEVERE_KEY_INJECTION_FAILURE",
                      customOnboardingApp.processRequest("/key 2049-3630"));
     }
+
+    @Test
+    public void stateTransitionErrorTest() {
+        oa.processRequest("/add 2049-3630");
+
+        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SERIAL_NUMBER_RECORDED -> DAMAGE_RECORDED)\n\tSTATUS: SERIAL_NUMBER_RECORDED",
+                      oa.processRequest("/damage 2049-3630 light"));
+        // assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SERIAL_NUMBER_RECORDED -> SIM_INSERTED_AND_RECORDED)\n\tSTATUS: SERIAL_NUMBER_RECORDED",
+        //               oa.processRequest("/sim 2049-3630 SNN IMSI IMEI"));
+        // oa.processRequest("/flash 2049-3630");
+    }
 }

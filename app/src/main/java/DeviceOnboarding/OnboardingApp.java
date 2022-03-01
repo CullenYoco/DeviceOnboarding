@@ -90,7 +90,11 @@ public class OnboardingApp {
     private String addDamage(String serialNumber, String damage) {
         DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
 
-        deviceInfo.setDamage(DamageRating.LIGHT); // ??
+        try {
+            deviceInfo.setDamage(DamageRating.LIGHT); // ??
+        } catch (IllegalStateException e) {
+            return warningOutputString(serialNumber, deviceInfo, "ILLEGAL STATE TRANSITION (" + deviceInfo.getCurrentState() + " -> " + e.getMessage() + ")");
+        }
 
         return outputString(serialNumber, deviceInfo, "DAMAGE ADDED");
     }

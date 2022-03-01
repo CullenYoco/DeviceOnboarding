@@ -76,6 +76,10 @@ public class DeviceInfo {
     }
 
     public void setDamage(DamageRating damage) {
+        if (currentState != DeviceState.DELIVERY_INFO_RECORDED) {
+            throw new IllegalStateException(DeviceState.DAMAGE_RECORDED + "");
+        }
+
         this.damage = damage;
 
         currentState = DeviceState.DAMAGE_RECORDED;
