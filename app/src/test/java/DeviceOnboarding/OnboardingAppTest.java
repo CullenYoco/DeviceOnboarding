@@ -138,4 +138,10 @@ class OnboardingAppTest {
         assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DAMAGE_RECORDED -> DELIVERY_INFO_RECORDED)\n\tSTATUS: DAMAGE_RECORDED",
                       oa.processRequest("/delivery 2049-3630 boxRefNo crateRefNo"));
     }
+
+    @Test
+    public void illegalRequestTest() {
+        assertEquals("ERROR -> ILLEGAL REQUEST FORMAT", oa.processRequest("requestString"));
+        assertEquals("ERROR -> ILLEGAL REQUEST FORMAT\n\tUNRECOGNIZED COMMAND: /test", oa.processRequest("/test 1234"));
+    }
 }

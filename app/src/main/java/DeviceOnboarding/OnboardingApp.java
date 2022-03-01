@@ -23,6 +23,10 @@ public class OnboardingApp {
     public String processRequest(String requestString) {
         String splitRequest[] = requestString.split(" ");
 
+        if (splitRequest.length < 2) {
+            return illegalRequestOutputString();
+        }
+
         if (splitRequest[0].equals("/add")) {
             return addDevice(splitRequest[1]);
         }
@@ -55,8 +59,12 @@ public class OnboardingApp {
             return storeDevice(splitRequest[1], splitRequest[2], splitRequest[3], splitRequest[4], splitRequest[5], 
                                splitRequest[6], splitRequest[7], splitRequest[8]);
         }
+
+        if (splitRequest[0].equals("/info")) {
+            return getDeviceInfo(splitRequest[1]);
+        }
         
-        return getDeviceInfo(splitRequest[1]);
+        return illegalRequestOutputString() + "\n\tUNRECOGNIZED COMMAND: " + splitRequest[0];
     }
 
     private String getDeviceInfo(String serialNumber) {
@@ -197,5 +205,9 @@ public class OnboardingApp {
 
     private String transitionExceptionOutputString(String serialNumber, DeviceInfo deviceInfo, IllegalStateException e) {
         return warningOutputString(serialNumber, deviceInfo, "ILLEGAL STATE TRANSITION (" + deviceInfo.getCurrentState() + " -> " + e.getMessage() + ")");
+    }
+
+    private String illegalRequestOutputString() {
+        return "ERROR -> ILLEGAL REQUEST FORMAT";
     }
 }
