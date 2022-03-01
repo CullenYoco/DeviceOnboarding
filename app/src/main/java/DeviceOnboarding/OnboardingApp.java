@@ -146,6 +146,8 @@ public class OnboardingApp {
             deviceInfo.injectionFailure();
 
             return errorOutputString(serialNumber, deviceInfo, "(CATASTROPHIC) KEY INJECTION FAILED");
+        } catch (IllegalStateException e) {
+            return transitionExceptionOutputString(serialNumber, deviceInfo, e);
         }
 
         return outputString(serialNumber, deviceInfo, "KEY INJECTED");

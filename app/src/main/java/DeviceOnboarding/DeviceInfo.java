@@ -106,6 +106,10 @@ public class DeviceInfo {
     }
 
     public void injectKey(byte[] key) {
+        if (currentState != DeviceState.FLASHED) {
+            throw new IllegalStateException(DeviceState.KEY_INJECTED + "");
+        }
+
         this.key = key;
 
         currentState = DeviceState.KEY_INJECTED;

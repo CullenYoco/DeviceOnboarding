@@ -123,5 +123,10 @@ class OnboardingAppTest {
                       oa.processRequest("/sim 2049-3630 SNN IMSI IMEI"));
         assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SERIAL_NUMBER_RECORDED -> FLASHED)\n\tSTATUS: SERIAL_NUMBER_RECORDED",
                       oa.processRequest("/flash 2049-3630"));
+
+        oa.processRequest("/delivery 2049-3630 boxRefNo crateRefNo");
+
+        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DELIVERY_INFO_RECORDED -> KEY_INJECTED)\n\tSTATUS: DELIVERY_INFO_RECORDED",
+                      oa.processRequest("/key 2049-3630"));
     }
 }
