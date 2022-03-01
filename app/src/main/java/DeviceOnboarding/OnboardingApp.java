@@ -170,7 +170,11 @@ public class OnboardingApp {
         DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
         WarehouseInfo warehouseInfo = new WarehouseInfo(Integer.parseInt(warehouseNo), Integer.parseInt(sectionNo), Integer.parseInt(rowNo), Integer.parseInt(shelfNo), Integer.parseInt(segmentNo), SegmentPosition.FRONTLEFT);
 
-        deviceInfo.setWarehouse(warehouseInfo);
+        try {
+            deviceInfo.setWarehouse(warehouseInfo);
+        } catch (IllegalStateException e) {
+            return transitionExceptionOutputString(serialNumber, deviceInfo, e);
+        }
 
         return outputString(serialNumber, deviceInfo, "DEVICE STORED IN WAREHOUSE");
     }

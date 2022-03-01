@@ -126,6 +126,10 @@ public class DeviceInfo {
     }
 
     public void setWarehouse(WarehouseInfo warehouseInfo) {
+        if (currentState != DeviceState.SENT_FOR_REPACK) {
+            throw new IllegalStateException(DeviceState.STORED_IN_WAREHOUSE + "");
+        }
+
         this.warehouseInfo = warehouseInfo;
 
         currentState = DeviceState.STORED_IN_WAREHOUSE;
