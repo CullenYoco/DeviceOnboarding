@@ -165,6 +165,36 @@ class OnboardingAppTest {
         segmentPositionTest(SegmentPosition.FRONT_RIGHT, "FRONT RIGHT");
     }
 
+    @Test
+    public void illegalStateProgressAttemptTest() {
+        OnboardingApp customOnboardingApp = new OnboardingApp(new MockDeviceFlash(-1), new MockKeyInjector(0));
+        customOnboardingApp.processRequest("/add 2049-3630");
+        customOnboardingApp.processRequest("/delivery 2049-3630 boxRefNo crateRefNo");
+        customOnboardingApp.processRequest("/damage 2049-3630 light");
+        customOnboardingApp.processRequest("/sim 2049-3630 SNN IMSI IMEI");
+        customOnboardingApp.processRequest("/flash 2049-3630");
+        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SEVERE_FLASH_FAILURE -> KEY_INJECTED)\n\tSTATUS: SEVERE_FLASH_FAILURE",
+                      customOnboardingApp.processRequest("/key 2049-3630"));
+        assertEquals("ERROR -> DEVICE {2049-3630}: (CATASTROPHIC) DEVICE FLASH FAILED\n\tSTATUS: SEVERE_FLASH_FAILURE",
+                      customOnboardingApp.processRequest("/flash 2049-3630"));
+        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SEVERE_FLASH_FAILURE -> SENT_FOR_REPACK)\n\tSTATUS: SEVERE_FLASH_FAILURE",
+                      customOnboardingApp.processRequest("/repack 2049-3630"));
+
+        customOnboardingApp = new OnboardingApp(new MockDeviceFlash(0), new MockKeyInjector(-1));
+        customOnboardingApp.processRequest("/add 2049-3630");
+        customOnboardingApp.processRequest("/delivery 2049-3630 boxRefNo crateRefNo");
+        customOnboardingApp.processRequest("/damage 2049-3630 light");
+        customOnboardingApp.processRequest("/sim 2049-3630 SNN IMSI IMEI");
+        customOnboardingApp.processRequest("/flash 2049-3630");
+        customOnboardingApp.processRequest("/key 2049-3630");
+        assertEquals("ERROR -> DEVICE {2049-3630}: (CATASTROPHIC) KEY INJECTION FAILED\n\tSTATUS: SEVERE_KEY_INJECTION_FAILURE",
+                    customOnboardingApp.processRequest("/key 2049-3630"));
+        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SEVERE_KEY_INJECTION_FAILURE -> FLASHED)\n\tSTATUS: SEVERE_KEY_INJECTION_FAILURE",
+                    customOnboardingApp.processRequest("/flash 2049-3630"));
+        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SEVERE_KEY_INJECTION_FAILURE -> SENT_FOR_REPACK)\n\tSTATUS: SEVERE_KEY_INJECTION_FAILURE",
+                    customOnboardingApp.processRequest("/repack 2049-3630"));
+    }
+
     private void damageRatingTest(DamageRating damageRating, String testString) {
         oa = new OnboardingApp();
 
