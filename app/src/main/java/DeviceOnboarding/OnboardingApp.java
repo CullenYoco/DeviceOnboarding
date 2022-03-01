@@ -156,7 +156,11 @@ public class OnboardingApp {
     private String repackDevice(String serialNumber) {
         DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
 
-        deviceInfo.sendForRepack();
+        try {
+            deviceInfo.sendForRepack();
+        } catch (IllegalStateException e) {
+            return transitionExceptionOutputString(serialNumber, deviceInfo, e);
+        }
 
         return outputString(serialNumber, deviceInfo, "DEVICE SENT FOR REPACK");
     }

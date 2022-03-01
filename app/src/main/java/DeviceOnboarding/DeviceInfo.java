@@ -116,6 +116,10 @@ public class DeviceInfo {
     }
 
     public void sendForRepack() {
+        if (currentState != DeviceState.KEY_INJECTED) {
+            throw new IllegalStateException(DeviceState.SENT_FOR_REPACK + "");
+        }
+
         this.isSentForRepack = true;
 
         currentState = DeviceState.SENT_FOR_REPACK;

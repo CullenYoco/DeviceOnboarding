@@ -128,5 +128,7 @@ class OnboardingAppTest {
 
         assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DELIVERY_INFO_RECORDED -> KEY_INJECTED)\n\tSTATUS: DELIVERY_INFO_RECORDED",
                       oa.processRequest("/key 2049-3630"));
+        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DELIVERY_INFO_RECORDED -> SENT_FOR_REPACK)\n\tSTATUS: DELIVERY_INFO_RECORDED",
+                      oa.processRequest("/repack 2049-3630"));     
     }
 }
