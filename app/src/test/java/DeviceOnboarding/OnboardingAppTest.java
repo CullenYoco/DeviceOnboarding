@@ -203,6 +203,9 @@ class OnboardingAppTest {
                       oa.processRequest("/flash 2049-3630"));
         assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DEVICE_DAMAGED -> SENT_FOR_REPACK)\n\tSTATUS: DEVICE_DAMAGED",
                       oa.processRequest("/repack 2049-3630"));
+        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DEVICE_DAMAGED -> DAMAGE_RECORDED)\n\tSTATUS: DEVICE_DAMAGED",
+                      oa.processRequest("/damage 2049-3630 light"));
+        
     }
 
     private void damageRatingTest(DamageRating damageRating, String testString) {
