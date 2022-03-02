@@ -13,3 +13,9 @@
 ```bash
 ./gradlew test
 ```
+
+### Commands (From CLI)
+
+```bash
+/help
+```
