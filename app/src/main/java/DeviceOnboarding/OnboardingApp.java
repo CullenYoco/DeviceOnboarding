@@ -42,6 +42,10 @@ public class OnboardingApp {
         String splitRequest[] = requestString.split(" ");
 
         if (splitRequest.length < 2) {
+            if (splitRequest[0].equals("/help")) {
+                return helpOutputString();
+            }
+
             return illegalRequestOutputString();
         }
 
@@ -238,5 +242,17 @@ public class OnboardingApp {
 
     private String illegalRequestOutputString() {
         return "ERROR -> ILLEGAL REQUEST FORMAT";
+    }
+
+    private String helpOutputString() {
+        return "=== HELP ===\n" +
+                "1) /add <SerialNo>\n" +
+                "2) /delivery <SerialNo> <BoxRef> <CrateRef>\n" +
+                "3) /damage <SerialNo> <DamageRating>\n" +
+                "4) /sim <SerialNo> <SNN> <IMSI> <IMEI>\n" +
+                "5) /flash <SerialNo>\n" +
+                "6) /key <SerialNo>\n" +
+                "7) /repack <SerialNo>\n" +
+                "8) /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>";
     }
 }

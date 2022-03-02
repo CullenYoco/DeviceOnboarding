@@ -205,7 +205,21 @@ class OnboardingAppTest {
                       oa.processRequest("/repack 2049-3630"));
         assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DEVICE_DAMAGED -> DAMAGE_RECORDED)\n\tSTATUS: DEVICE_DAMAGED",
                       oa.processRequest("/damage 2049-3630 light"));
-        
+    }
+
+    @Test
+    public void helpTest() {
+        String expectedString = "=== HELP ===\n" +
+                                "1) /add <SerialNo>\n" +
+                                "2) /delivery <SerialNo> <BoxRef> <CrateRef>\n" +
+                                "3) /damage <SerialNo> <DamageRating>\n" +
+                                "4) /sim <SerialNo> <SNN> <IMSI> <IMEI>\n" +
+                                "5) /flash <SerialNo>\n" +
+                                "6) /key <SerialNo>\n" +
+                                "7) /repack <SerialNo>\n" +
+                                "8) /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>";
+
+        assertEquals(expectedString, oa.processRequest("/help"));
     }
 
     private void damageRatingTest(DamageRating damageRating, String testString) {
