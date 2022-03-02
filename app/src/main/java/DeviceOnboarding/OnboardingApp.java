@@ -3,6 +3,7 @@ package DeviceOnboarding;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+import DeviceOnboarding.DeviceInfo.IllegalSerialNumberException;
 import DeviceOnboarding.MockDeviceFlash.FlashFailureException;
 import DeviceOnboarding.MockKeyInjector.InjectionFailureException;
 
@@ -111,7 +112,14 @@ public class OnboardingApp {
     }
 
     private String addDevice(String serialNumber) {
-        DeviceInfo deviceInfo = new DeviceInfo(serialNumber);
+        DeviceInfo deviceInfo;
+        
+        try {
+            deviceInfo = new DeviceInfo(serialNumber);
+        } catch (IllegalSerialNumberException e) {
+            return "ERROR -> ILLEGAL SERIAL NUMBER: " + serialNumber;
+        }
+        
 
         mockDB.addDevice(deviceInfo);
         
@@ -126,7 +134,7 @@ public class OnboardingApp {
 
     private String addDamage(DeviceInfo deviceInfo, String damage) {
         try {
-            deviceInfo.setDamage(stringToDamageRating(damage)); // ??
+            deviceInfo.setDamage(stringToDamageRating(damage));
         } catch (IllegalArgumentException e) {
             return errorOutputString(deviceInfo, "DAMAGE STATUS INVALID {" + damage + "}" );
         }

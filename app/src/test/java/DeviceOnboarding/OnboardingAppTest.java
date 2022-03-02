@@ -2,8 +2,6 @@ package DeviceOnboarding;
 
 import org.junit.jupiter.api.Test;
 
-import DeviceOnboarding.DeviceInfo.IllegalSerialNumberException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -57,9 +55,7 @@ class OnboardingAppTest {
 
     @Test
     public void illegalSerialNumberTest() {
-        assertThrows(IllegalSerialNumberException.class, () -> {
-            oa.processRequest("/add 1234");
-        });
+        assertEquals("ERROR -> ILLEGAL SERIAL NUMBER: 1234", oa.processRequest("/add 1234"));
     }
 
     @Test
