@@ -9,7 +9,7 @@ public class DeviceInfo {
     private DamageRating damage = null;
     private SIMCardInfo simCardInfo = null;
     private boolean isFlashed = false;
-    private byte key[];
+    private byte key[] = null;
     private boolean isSentForRepack = false;
     private WarehouseInfo warehouseInfo = null;
     private DeviceState currentState = DeviceState.DEVICE_RECEIVED;
@@ -149,16 +149,16 @@ public class DeviceInfo {
 
     @Override
     public String toString() {
-        String out = "===DEVICE {" + serialNumber + "}===";
+        String out = "=== DEVICE {" + serialNumber + "} ===";
 
-        out += "\nBOX: " + boxReference;
-        out += "\nCRATE: " + crateReference;
-        out += "\nDAMAGE: " + damage;
-        out += "\n" + simCardInfo;
+        out += "\nBOX: " + (boxReference == null ? "-" : boxReference);
+        out += "\nCRATE: " + (crateReference == null ? "-" : crateReference);
+        out += "\nDAMAGE: " + (damage == null ? "-" : damage);
+        out += "\n" + (simCardInfo == null ? "SIM: -": simCardInfo);
         out += "\nFLASHED: " + isFlashed;
-        out += "\nKEY: " + Arrays.toString(key);
+        out += "\nKEY: " + (key == null ? "-" : Arrays.toString(key));
         out += "\nSENT FOR REPACK: " + isSentForRepack;
-        out += "\n" + warehouseInfo;
+        out += "\n" + (warehouseInfo == null ? "WAREHOUSE: -" : warehouseInfo);
         out += "\nSTATE: " + currentState;
 
         return out;
