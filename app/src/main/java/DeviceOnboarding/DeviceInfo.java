@@ -82,7 +82,11 @@ public class DeviceInfo {
 
         this.damage = damage;
 
-        currentState = DeviceState.DAMAGE_RECORDED;
+        if (damage == DamageRating.MODERATE || damage == DamageRating.HIGH || damage == DamageRating.UNUSABLE) {
+            currentState = DeviceState.DEVICE_DAMAGED;
+        } else {
+            currentState = DeviceState.DAMAGE_RECORDED;
+        }
     }
 
     public void setSIMCard(SIMCardInfo simCard) {

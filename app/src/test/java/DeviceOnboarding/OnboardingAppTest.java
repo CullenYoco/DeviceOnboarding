@@ -190,6 +190,21 @@ class OnboardingAppTest {
                     customOnboardingApp.processRequest("/repack 2049-3630"));
     }
 
+    @Test
+    public void tooMuchDamageTest() {
+        oa.processRequest("/add 2049-3630");
+        oa.processRequest("/delivery 2049-3630 boxRefNo crateRefNo");
+        
+        assertEquals("ERROR -> DEVICE {2049-3630}: DAMAGE TOO HIGH\n\tSTATUS: DEVICE_DAMAGED",
+                      oa.processRequest("/damage 2049-3630 moderate"));
+        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DEVICE_DAMAGED -> KEY_INJECTED)\n\tSTATUS: DEVICE_DAMAGED",
+                      oa.processRequest("/key 2049-3630"));
+        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DEVICE_DAMAGED -> FLASHED)\n\tSTATUS: DEVICE_DAMAGED",
+                      oa.processRequest("/flash 2049-3630"));
+        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DEVICE_DAMAGED -> SENT_FOR_REPACK)\n\tSTATUS: DEVICE_DAMAGED",
+                      oa.processRequest("/repack 2049-3630"));
+    }
+
     private void damageRatingTest(DamageRating damageRating, String testString) {
         oa = new OnboardingApp();
 

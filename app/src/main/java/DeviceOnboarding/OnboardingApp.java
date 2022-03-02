@@ -139,6 +139,9 @@ public class OnboardingApp {
             return errorOutputString(deviceInfo, "DAMAGE STATUS INVALID {" + damage + "}" );
         }
         
+        if (deviceInfo.getCurrentState() == DeviceState.DEVICE_DAMAGED) {
+            return errorOutputString(deviceInfo, "DAMAGE TOO HIGH");
+        }
 
         return outputString(deviceInfo, "DAMAGE ADDED");
     }
