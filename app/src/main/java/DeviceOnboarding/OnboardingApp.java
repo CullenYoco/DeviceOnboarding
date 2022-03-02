@@ -16,7 +16,7 @@ public class OnboardingApp {
         OnboardingApp oa = new OnboardingApp();
         Scanner scanner = new Scanner(System.in);
 
-        while (true) {
+        while (scanner.hasNextLine()) {
             String requestString = scanner.nextLine();
 
             if (requestString.equals("/quit") || requestString.equals("/q")) {
