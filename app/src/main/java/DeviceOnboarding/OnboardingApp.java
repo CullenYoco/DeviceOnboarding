@@ -97,7 +97,7 @@ public class OnboardingApp {
                 return getDeviceInfo(requestArgs[1]);
             }
         } catch (NoSuchElementException e) {
-            return "ERROR -> DEVICE {" + serialNumber + "}: Device NOT Found";
+            return red("ERROR") + " -> DEVICE {" + serialNumber + "}: Device NOT Found";
         } catch (IllegalStateException e) {
             return transitionExceptionOutputString(deviceInfo, e);
         }
@@ -121,9 +121,8 @@ public class OnboardingApp {
         try {
             deviceInfo = new DeviceInfo(serialNumber);
         } catch (IllegalSerialNumberException e) {
-            return "ERROR -> ILLEGAL SERIAL NUMBER: " + serialNumber;
+            return red("ERROR") + " -> ILLEGAL SERIAL NUMBER: " + serialNumber;
         }
-        
 
         mockDB.addDevice(deviceInfo);
         
@@ -229,11 +228,11 @@ public class OnboardingApp {
     }
 
     private String warningOutputString(DeviceInfo deviceInfo, String message) {
-        return "WARNING -> " + outputString(deviceInfo, message);
+        return yellow("WARNING") + " -> " + outputString(deviceInfo, message);
     }
 
     private String errorOutputString(DeviceInfo deviceInfo, String message) {
-        return "ERROR -> " + outputString(deviceInfo, message);
+        return red("ERROR") + " -> " + outputString(deviceInfo, message);
     }
 
     private String transitionExceptionOutputString(DeviceInfo deviceInfo, IllegalStateException e) {
@@ -241,7 +240,7 @@ public class OnboardingApp {
     }
 
     private String illegalRequestOutputString() {
-        return "ERROR -> ILLEGAL REQUEST FORMAT";
+        return red("ERROR") + " -> ILLEGAL REQUEST FORMAT";
     }
 
     private String helpOutputString() {
@@ -254,5 +253,17 @@ public class OnboardingApp {
                 "6) /key <SerialNo>\n" +
                 "7) /repack <SerialNo>\n" +
                 "8) /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>";
+    }
+
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+
+    private String red(String string) {
+        return ANSI_RED + string + ANSI_RESET;
+    }
+
+    private String yellow(String string) {
+        return ANSI_YELLOW + string + ANSI_RESET;
     }
 }

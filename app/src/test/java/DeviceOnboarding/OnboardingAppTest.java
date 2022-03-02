@@ -50,12 +50,12 @@ class OnboardingAppTest {
 
     @Test
     public void getInfoOnNonExistentDeviceTest() {
-        assertEquals("ERROR -> DEVICE {2049-3630}: Device NOT Found", oa.processRequest("/info 2049-3630"));
+        assertEquals("\u001B[31mERROR\u001B[0m -> DEVICE {2049-3630}: Device NOT Found", oa.processRequest("/info 2049-3630"));
     }
 
     @Test
     public void illegalSerialNumberTest() {
-        assertEquals("ERROR -> ILLEGAL SERIAL NUMBER: 1234", oa.processRequest("/add 1234"));
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL SERIAL NUMBER: 1234", oa.processRequest("/add 1234"));
     }
 
     @Test
@@ -66,7 +66,7 @@ class OnboardingAppTest {
         customOnboardingApp.processRequest("/damage 2049-3630 light");
         customOnboardingApp.processRequest("/sim 2049-3630 SNN IMSI IMEI");
 
-        assertEquals("WARNING -> DEVICE {2049-3630}: DEVICE FLASH FAILED\n\tSTATUS: SIM_INSERTED_AND_RECORDED",
+        assertEquals("\u001B[33mWARNING\u001B[0m -> DEVICE {2049-3630}: DEVICE FLASH FAILED\n\tSTATUS: SIM_INSERTED_AND_RECORDED",
                      customOnboardingApp.processRequest("/flash 2049-3630"));
     }
 
@@ -78,7 +78,7 @@ class OnboardingAppTest {
         customOnboardingApp.processRequest("/damage 2049-3630 light");
         customOnboardingApp.processRequest("/sim 2049-3630 SNN IMSI IMEI");      
 
-        assertEquals("ERROR -> DEVICE {2049-3630}: (CATASTROPHIC) DEVICE FLASH FAILED\n\tSTATUS: SEVERE_FLASH_FAILURE",
+        assertEquals("\u001B[31mERROR\u001B[0m -> DEVICE {2049-3630}: (CATASTROPHIC) DEVICE FLASH FAILED\n\tSTATUS: SEVERE_FLASH_FAILURE",
                      customOnboardingApp.processRequest("/flash 2049-3630"));
     }
 
@@ -91,7 +91,7 @@ class OnboardingAppTest {
         customOnboardingApp.processRequest("/sim 2049-3630 SNN IMSI IMEI");
         customOnboardingApp.processRequest("/flash 2049-3630");
 
-        assertEquals("WARNING -> DEVICE {2049-3630}: KEY INJECTION FAILED\n\tSTATUS: FLASHED",
+        assertEquals("\u001B[33mWARNING\u001B[0m -> DEVICE {2049-3630}: KEY INJECTION FAILED\n\tSTATUS: FLASHED",
                      customOnboardingApp.processRequest("/key 2049-3630"));
     }
 
@@ -104,7 +104,7 @@ class OnboardingAppTest {
         customOnboardingApp.processRequest("/sim 2049-3630 SNN IMSI IMEI");
         customOnboardingApp.processRequest("/flash 2049-3630");
 
-        assertEquals("ERROR -> DEVICE {2049-3630}: (CATASTROPHIC) KEY INJECTION FAILED\n\tSTATUS: SEVERE_KEY_INJECTION_FAILURE",
+        assertEquals("\u001B[31mERROR\u001B[0m -> DEVICE {2049-3630}: (CATASTROPHIC) KEY INJECTION FAILED\n\tSTATUS: SEVERE_KEY_INJECTION_FAILURE",
                      customOnboardingApp.processRequest("/key 2049-3630"));
     }
 
@@ -112,35 +112,35 @@ class OnboardingAppTest {
     public void stateTransitionErrorTest() {
         oa.processRequest("/add 2049-3630");
 
-        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SERIAL_NUMBER_RECORDED -> DAMAGE_RECORDED)\n\tSTATUS: SERIAL_NUMBER_RECORDED",
+        assertEquals("\u001B[33mWARNING\u001B[0m -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SERIAL_NUMBER_RECORDED -> DAMAGE_RECORDED)\n\tSTATUS: SERIAL_NUMBER_RECORDED",
                       oa.processRequest("/damage 2049-3630 light"));
-        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SERIAL_NUMBER_RECORDED -> SIM_INSERTED_AND_RECORDED)\n\tSTATUS: SERIAL_NUMBER_RECORDED",
+        assertEquals("\u001B[33mWARNING\u001B[0m -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SERIAL_NUMBER_RECORDED -> SIM_INSERTED_AND_RECORDED)\n\tSTATUS: SERIAL_NUMBER_RECORDED",
                       oa.processRequest("/sim 2049-3630 SNN IMSI IMEI"));
-        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SERIAL_NUMBER_RECORDED -> FLASHED)\n\tSTATUS: SERIAL_NUMBER_RECORDED",
+        assertEquals("\u001B[33mWARNING\u001B[0m -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SERIAL_NUMBER_RECORDED -> FLASHED)\n\tSTATUS: SERIAL_NUMBER_RECORDED",
                       oa.processRequest("/flash 2049-3630"));
 
         oa.processRequest("/delivery 2049-3630 boxRefNo crateRefNo");
 
-        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DELIVERY_INFO_RECORDED -> KEY_INJECTED)\n\tSTATUS: DELIVERY_INFO_RECORDED",
+        assertEquals("\u001B[33mWARNING\u001B[0m -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DELIVERY_INFO_RECORDED -> KEY_INJECTED)\n\tSTATUS: DELIVERY_INFO_RECORDED",
                       oa.processRequest("/key 2049-3630"));
-        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DELIVERY_INFO_RECORDED -> SENT_FOR_REPACK)\n\tSTATUS: DELIVERY_INFO_RECORDED",
+        assertEquals("\u001B[33mWARNING\u001B[0m -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DELIVERY_INFO_RECORDED -> SENT_FOR_REPACK)\n\tSTATUS: DELIVERY_INFO_RECORDED",
                       oa.processRequest("/repack 2049-3630"));
-        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DELIVERY_INFO_RECORDED -> STORED_IN_WAREHOUSE)\n\tSTATUS: DELIVERY_INFO_RECORDED",
+        assertEquals("\u001B[33mWARNING\u001B[0m -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DELIVERY_INFO_RECORDED -> STORED_IN_WAREHOUSE)\n\tSTATUS: DELIVERY_INFO_RECORDED",
                       oa.processRequest("/store 2049-3630 1 1 1 1 1 front left"));
 
         oa.processRequest("/damage 2049-3630 light");
 
-        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DAMAGE_RECORDED -> DELIVERY_INFO_RECORDED)\n\tSTATUS: DAMAGE_RECORDED",
+        assertEquals("\u001B[33mWARNING\u001B[0m -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DAMAGE_RECORDED -> DELIVERY_INFO_RECORDED)\n\tSTATUS: DAMAGE_RECORDED",
                       oa.processRequest("/delivery 2049-3630 boxRefNo crateRefNo"));
     }
 
     @Test
     public void illegalRequestTest() {
-        assertEquals("ERROR -> ILLEGAL REQUEST FORMAT", oa.processRequest("requestString"));
-        assertEquals("ERROR -> DEVICE {1234}: Device NOT Found", oa.processRequest("/test 1234"));
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL REQUEST FORMAT", oa.processRequest("requestString"));
+        assertEquals("\u001B[31mERROR\u001B[0m -> DEVICE {1234}: Device NOT Found", oa.processRequest("/test 1234"));
 
         oa.processRequest("/add 2049-3630");
-        assertEquals("ERROR -> ILLEGAL REQUEST FORMAT\n\tUNRECOGNIZED COMMAND: /test", oa.processRequest("/test 2049-3630"));
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL REQUEST FORMAT\n\tUNRECOGNIZED COMMAND: /test", oa.processRequest("/test 2049-3630"));
     }
 
     @Test
@@ -168,11 +168,11 @@ class OnboardingAppTest {
         customOnboardingApp.processRequest("/damage 2049-3630 light");
         customOnboardingApp.processRequest("/sim 2049-3630 SNN IMSI IMEI");
         customOnboardingApp.processRequest("/flash 2049-3630");
-        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SEVERE_FLASH_FAILURE -> KEY_INJECTED)\n\tSTATUS: SEVERE_FLASH_FAILURE",
+        assertEquals("\u001B[33mWARNING\u001B[0m -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SEVERE_FLASH_FAILURE -> KEY_INJECTED)\n\tSTATUS: SEVERE_FLASH_FAILURE",
                       customOnboardingApp.processRequest("/key 2049-3630"));
-        assertEquals("ERROR -> DEVICE {2049-3630}: (CATASTROPHIC) DEVICE FLASH FAILED\n\tSTATUS: SEVERE_FLASH_FAILURE",
+        assertEquals("\u001B[31mERROR\u001B[0m -> DEVICE {2049-3630}: (CATASTROPHIC) DEVICE FLASH FAILED\n\tSTATUS: SEVERE_FLASH_FAILURE",
                       customOnboardingApp.processRequest("/flash 2049-3630"));
-        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SEVERE_FLASH_FAILURE -> SENT_FOR_REPACK)\n\tSTATUS: SEVERE_FLASH_FAILURE",
+        assertEquals("\u001B[33mWARNING\u001B[0m -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SEVERE_FLASH_FAILURE -> SENT_FOR_REPACK)\n\tSTATUS: SEVERE_FLASH_FAILURE",
                       customOnboardingApp.processRequest("/repack 2049-3630"));
 
         customOnboardingApp = new OnboardingApp(new MockDeviceFlash(0), new MockKeyInjector(-1));
@@ -182,11 +182,11 @@ class OnboardingAppTest {
         customOnboardingApp.processRequest("/sim 2049-3630 SNN IMSI IMEI");
         customOnboardingApp.processRequest("/flash 2049-3630");
         customOnboardingApp.processRequest("/key 2049-3630");
-        assertEquals("ERROR -> DEVICE {2049-3630}: (CATASTROPHIC) KEY INJECTION FAILED\n\tSTATUS: SEVERE_KEY_INJECTION_FAILURE",
+        assertEquals("\u001B[31mERROR\u001B[0m -> DEVICE {2049-3630}: (CATASTROPHIC) KEY INJECTION FAILED\n\tSTATUS: SEVERE_KEY_INJECTION_FAILURE",
                     customOnboardingApp.processRequest("/key 2049-3630"));
-        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SEVERE_KEY_INJECTION_FAILURE -> FLASHED)\n\tSTATUS: SEVERE_KEY_INJECTION_FAILURE",
+        assertEquals("\u001B[33mWARNING\u001B[0m -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SEVERE_KEY_INJECTION_FAILURE -> FLASHED)\n\tSTATUS: SEVERE_KEY_INJECTION_FAILURE",
                     customOnboardingApp.processRequest("/flash 2049-3630"));
-        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SEVERE_KEY_INJECTION_FAILURE -> SENT_FOR_REPACK)\n\tSTATUS: SEVERE_KEY_INJECTION_FAILURE",
+        assertEquals("\u001B[33mWARNING\u001B[0m -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (SEVERE_KEY_INJECTION_FAILURE -> SENT_FOR_REPACK)\n\tSTATUS: SEVERE_KEY_INJECTION_FAILURE",
                     customOnboardingApp.processRequest("/repack 2049-3630"));
     }
 
@@ -195,15 +195,15 @@ class OnboardingAppTest {
         oa.processRequest("/add 2049-3630");
         oa.processRequest("/delivery 2049-3630 boxRefNo crateRefNo");
         
-        assertEquals("ERROR -> DEVICE {2049-3630}: DAMAGE TOO HIGH\n\tSTATUS: DEVICE_DAMAGED",
+        assertEquals("\u001B[31mERROR\u001B[0m -> DEVICE {2049-3630}: DAMAGE TOO HIGH\n\tSTATUS: DEVICE_DAMAGED",
                       oa.processRequest("/damage 2049-3630 moderate"));
-        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DEVICE_DAMAGED -> KEY_INJECTED)\n\tSTATUS: DEVICE_DAMAGED",
+        assertEquals("\u001B[33mWARNING\u001B[0m -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DEVICE_DAMAGED -> KEY_INJECTED)\n\tSTATUS: DEVICE_DAMAGED",
                       oa.processRequest("/key 2049-3630"));
-        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DEVICE_DAMAGED -> FLASHED)\n\tSTATUS: DEVICE_DAMAGED",
+        assertEquals("\u001B[33mWARNING\u001B[0m -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DEVICE_DAMAGED -> FLASHED)\n\tSTATUS: DEVICE_DAMAGED",
                       oa.processRequest("/flash 2049-3630"));
-        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DEVICE_DAMAGED -> SENT_FOR_REPACK)\n\tSTATUS: DEVICE_DAMAGED",
+        assertEquals("\u001B[33mWARNING\u001B[0m -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DEVICE_DAMAGED -> SENT_FOR_REPACK)\n\tSTATUS: DEVICE_DAMAGED",
                       oa.processRequest("/repack 2049-3630"));
-        assertEquals("WARNING -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DEVICE_DAMAGED -> DAMAGE_RECORDED)\n\tSTATUS: DEVICE_DAMAGED",
+        assertEquals("\u001B[33mWARNING\u001B[0m -> DEVICE {2049-3630}: ILLEGAL STATE TRANSITION (DEVICE_DAMAGED -> DAMAGE_RECORDED)\n\tSTATUS: DEVICE_DAMAGED",
                       oa.processRequest("/damage 2049-3630 light"));
     }
 
