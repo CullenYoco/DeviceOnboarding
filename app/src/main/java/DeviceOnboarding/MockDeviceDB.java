@@ -43,6 +43,6 @@ public class MockDeviceDB {
     }
 
     private boolean isDeviceInfoIllegal(DeviceInfo deviceInfo) {
-        return deviceInfo == null || deviceInfo.getSerialNumber() == null || contains(deviceInfo.getSerialNumber());
+        return deviceInfo == null || contains(deviceInfo.getSerialNumber());
     }
 }

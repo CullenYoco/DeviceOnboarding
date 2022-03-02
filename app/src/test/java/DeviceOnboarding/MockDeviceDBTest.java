@@ -22,8 +22,7 @@ public class MockDeviceDBTest {
 
     @Test
     public void addDeviceTest() {
-        DeviceInfo deviceInfo = new DeviceInfo();
-        deviceInfo.setSerialNumber("2049-3630");
+        DeviceInfo deviceInfo = new DeviceInfo("2049-3630");
 
         mdb.addDevice(deviceInfo);
         assertTrue(mdb.contains("2049-3630"));
@@ -31,8 +30,7 @@ public class MockDeviceDBTest {
 
     @Test
     public void getDeviceTest() {
-        DeviceInfo deviceInfo = new DeviceInfo();
-        deviceInfo.setSerialNumber("2049-3630");
+        DeviceInfo deviceInfo = new DeviceInfo("2049-3630");
 
         mdb.addDevice(deviceInfo);
         deviceInfo = mdb.getDevice("2049-3630");
@@ -46,10 +44,6 @@ public class MockDeviceDBTest {
         assertThrows(IllegalArgumentException.class, () -> {
             mdb.addDevice(null);
         });
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            mdb.addDevice(new DeviceInfo());
-        });
     }
 
     @Test
@@ -61,8 +55,7 @@ public class MockDeviceDBTest {
 
     @Test
     public void fullNoSuchElementTest() {
-        DeviceInfo deviceInfo = new DeviceInfo();
-        deviceInfo.setSerialNumber("2049-3630");
+        DeviceInfo deviceInfo = new DeviceInfo("2049-3630");
         mdb.addDevice(deviceInfo);
 
         assertThrows(NoSuchElementException.class, () -> {
@@ -72,8 +65,7 @@ public class MockDeviceDBTest {
 
     @Test
     public void addExistingElementTest() {
-        DeviceInfo deviceInfo = new DeviceInfo();
-        deviceInfo.setSerialNumber("2049-3630");
+        DeviceInfo deviceInfo = new DeviceInfo("2049-3630");
 
         mdb.addDevice(deviceInfo);
 

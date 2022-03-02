@@ -12,10 +12,16 @@ public class DeviceInfo {
     private byte key[];
     private boolean isSentForRepack = false;
     private WarehouseInfo warehouseInfo = null;
-    private DeviceState currentState;
+    private DeviceState currentState = DeviceState.DEVICE_RECEIVED;
 
-    public DeviceInfo() {
-        this.currentState = DeviceState.DEVICE_RECEIVED;
+    public DeviceInfo(String serialNumber) {
+        if (!serialNumber.matches("[0-9]{4}-[0-9]{3}[0-9xX]")) {
+            throw new IllegalSerialNumberException();
+        }
+
+        this.serialNumber = serialNumber;
+
+        currentState = DeviceState.SERIAL_NUMBER_RECORDED;
     }
 
     public String getSerialNumber() {
@@ -56,16 +62,6 @@ public class DeviceInfo {
 
     public boolean isSentForRepack() {
         return isSentForRepack;
-    }
-
-    public void setSerialNumber(String serialNumber) {
-        if (!serialNumber.matches("[0-9]{4}-[0-9]{3}[0-9xX]")) {
-            throw new IllegalSerialNumberException();
-        }
-
-        this.serialNumber = serialNumber;
-
-        currentState = DeviceState.SERIAL_NUMBER_RECORDED;
     }
 
     public void setDeliveryInfo(String boxReference, String crateReference) {

@@ -111,10 +111,10 @@ public class OnboardingApp {
     }
 
     private String addDevice(String serialNumber) {
-        DeviceInfo deviceInfo = new DeviceInfo();
-        deviceInfo.setSerialNumber(serialNumber);
+        DeviceInfo deviceInfo = new DeviceInfo(serialNumber);
 
         mockDB.addDevice(deviceInfo);
+        
         return outputString(deviceInfo, "DEVICE ADDED");
     }
 

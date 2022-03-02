@@ -19,8 +19,7 @@ class OnboardingAppTest {
 
     @Test
     public void simpleWorkFlowTest() {
-        DeviceInfo expectedDeviceInfo = new DeviceInfo();
-        expectedDeviceInfo.setSerialNumber("2049-3630");
+        DeviceInfo expectedDeviceInfo = new DeviceInfo("2049-3630");
         expectedDeviceInfo.setDeliveryInfo("boxRefNo", "crateRefNo");
         expectedDeviceInfo.setDamage(DamageRating.LIGHT);
         expectedDeviceInfo.setSIMCard(new SIMCardInfo("SNN", "IMSI", "IMEI"));
@@ -198,8 +197,7 @@ class OnboardingAppTest {
     private void damageRatingTest(DamageRating damageRating, String testString) {
         oa = new OnboardingApp();
 
-        DeviceInfo expectedDeviceInfo = new DeviceInfo();
-        expectedDeviceInfo.setSerialNumber("2049-3630");
+        DeviceInfo expectedDeviceInfo = new DeviceInfo("2049-3630");
         expectedDeviceInfo.setDeliveryInfo("boxRefNo", "crateRefNo");
         expectedDeviceInfo.setDamage(damageRating);
         oa.processRequest("/add 2049-3630");
@@ -212,8 +210,7 @@ class OnboardingAppTest {
     private void segmentPositionTest(SegmentPosition segmentPosition, String testString) {
         oa = new OnboardingApp();
 
-        DeviceInfo expectedDeviceInfo = new DeviceInfo();
-        expectedDeviceInfo.setSerialNumber("2049-3630");
+        DeviceInfo expectedDeviceInfo = new DeviceInfo("2049-3630");
         expectedDeviceInfo.setDeliveryInfo("boxRefNo", "crateRefNo");
         expectedDeviceInfo.setDamage(DamageRating.LIGHT);
         expectedDeviceInfo.setSIMCard(new SIMCardInfo("SNN", "IMSI", "IMEI"));
