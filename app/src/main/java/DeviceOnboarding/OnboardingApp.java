@@ -11,6 +11,10 @@ public class OnboardingApp {
     MockDeviceDB mockDB = new MockDeviceDB();
     MockDeviceFlash mockDeviceFlash;
     MockKeyInjector mockKeyInjector;
+    
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
 
     public static void main(String[] args) {
         OnboardingApp oa = new OnboardingApp();
@@ -53,6 +57,74 @@ public class OnboardingApp {
         }
 
         return handleRequest(splitRequest);
+    }
+
+    private String addDamage(DeviceInfo deviceInfo, String damage) {
+        try {
+            deviceInfo.setDamage(stringToDamageRating(damage));
+        } catch (IllegalArgumentException e) {
+            return errorOutputString(deviceInfo, "DAMAGE STATUS INVALID {" + damage + "}" );
+        }
+        
+        if (deviceInfo.getCurrentState() == DeviceState.DEVICE_DAMAGED) {
+            return errorOutputString(deviceInfo, "DAMAGE TOO HIGH");
+        }
+
+        return outputString(deviceInfo, "DAMAGE ADDED");
+    }
+
+    private String addDeliveryInfo(DeviceInfo deviceInfo, String boxReference, String crateReference) {
+        deviceInfo.setDeliveryInfo(boxReference, crateReference);
+
+        return outputString(deviceInfo, "DELIVERY INFO ADDED");
+    }
+
+    private String addDevice(String serialNumber) {
+        DeviceInfo deviceInfo;
+        
+        try {
+            deviceInfo = new DeviceInfo(serialNumber);
+        } catch (IllegalSerialNumberException e) {
+            return red("ERROR") + " -> ILLEGAL SERIAL NUMBER: " + serialNumber;
+        }
+
+        mockDB.addDevice(deviceInfo);
+        
+        return outputString(deviceInfo, "DEVICE ADDED");
+    }
+
+    private String addSIM(DeviceInfo deviceInfo, String SNN, String IMSI, String IMEI) {
+        SIMCardInfo simCard = new SIMCardInfo(SNN, IMSI, IMEI);
+
+        deviceInfo.setSIMCard(simCard);
+
+        return outputString(deviceInfo, "SIM ADDED");
+    }
+
+    private String errorOutputString(DeviceInfo deviceInfo, String message) {
+        return red("ERROR") + " -> " + outputString(deviceInfo, message);
+    }
+
+    private String flashDevice(DeviceInfo deviceInfo) {
+        try {
+           if (mockDeviceFlash.flashDevice()) {
+               deviceInfo.flashDevice();
+           } else {
+               return warningOutputString(deviceInfo, "DEVICE FLASH FAILED");
+           }
+       } catch (FlashFailureException e) {
+           deviceInfo.flashFailure();
+
+           return errorOutputString(deviceInfo, "(CATASTROPHIC) DEVICE FLASH FAILED");
+       }
+
+       return outputString(deviceInfo, "DEVICE FLASHED");
+   }
+
+    private String getDeviceInfo(String serialNumber) {
+        DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
+
+        return deviceInfo.toString();
     }
 
     private String handleRequest(String[] requestArgs) {
@@ -108,76 +180,20 @@ public class OnboardingApp {
         return unrecognizedCommandOutputString(command);
     }
 
-    private String unrecognizedCommandOutputString(String command) {
-        return illegalRequestOutputString() + "\n\tUNRECOGNIZED COMMAND: " + command;
+    private String helpOutputString() {
+        return "=== HELP ===\n" +
+                "1) /add <SerialNo>\n" +
+                "2) /delivery <SerialNo> <BoxRef> <CrateRef>\n" +
+                "3) /damage <SerialNo> <DamageRating>\n" +
+                "4) /sim <SerialNo> <SNN> <IMSI> <IMEI>\n" +
+                "5) /flash <SerialNo>\n" +
+                "6) /key <SerialNo>\n" +
+                "7) /repack <SerialNo>\n" +
+                "8) /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>";
     }
 
-    private String getDeviceInfo(String serialNumber) {
-        DeviceInfo deviceInfo = mockDB.getDevice(serialNumber);
-
-        return deviceInfo.toString();
-    }
-
-    private String addDevice(String serialNumber) {
-        DeviceInfo deviceInfo;
-        
-        try {
-            deviceInfo = new DeviceInfo(serialNumber);
-        } catch (IllegalSerialNumberException e) {
-            return red("ERROR") + " -> ILLEGAL SERIAL NUMBER: " + serialNumber;
-        }
-
-        mockDB.addDevice(deviceInfo);
-        
-        return outputString(deviceInfo, "DEVICE ADDED");
-    }
-
-    private String addDeliveryInfo(DeviceInfo deviceInfo, String boxReference, String crateReference) {
-        deviceInfo.setDeliveryInfo(boxReference, crateReference);
-
-        return outputString(deviceInfo, "DELIVERY INFO ADDED");
-    }
-
-    private String addDamage(DeviceInfo deviceInfo, String damage) {
-        try {
-            deviceInfo.setDamage(stringToDamageRating(damage));
-        } catch (IllegalArgumentException e) {
-            return errorOutputString(deviceInfo, "DAMAGE STATUS INVALID {" + damage + "}" );
-        }
-        
-        if (deviceInfo.getCurrentState() == DeviceState.DEVICE_DAMAGED) {
-            return errorOutputString(deviceInfo, "DAMAGE TOO HIGH");
-        }
-
-        return outputString(deviceInfo, "DAMAGE ADDED");
-    }
-
-    private DamageRating stringToDamageRating(String damage) {
-        return DamageRating.valueOf(damage.toUpperCase());
-    }
-
-    private String addSIM(DeviceInfo deviceInfo, String SNN, String IMSI, String IMEI) {
-        SIMCardInfo simCard = new SIMCardInfo(SNN, IMSI, IMEI);
-
-        deviceInfo.setSIMCard(simCard);
-
-        return outputString(deviceInfo, "SIM ADDED");
-    }
-
-    private String flashDevice(DeviceInfo deviceInfo) {
-         try {
-            if (mockDeviceFlash.flashDevice()) {
-                deviceInfo.flashDevice();
-            } else {
-                return warningOutputString(deviceInfo, "DEVICE FLASH FAILED");
-            }
-        } catch (FlashFailureException e) {
-            deviceInfo.flashFailure();
-
-            return errorOutputString(deviceInfo, "(CATASTROPHIC) DEVICE FLASH FAILED");
-        }
-
-        return outputString(deviceInfo, "DEVICE FLASHED");
+    private String illegalRequestOutputString() {
+        return red("ERROR") + " -> ILLEGAL REQUEST FORMAT";
     }
 
     private String injectKey(DeviceInfo deviceInfo) {
@@ -196,6 +212,14 @@ public class OnboardingApp {
         }
 
         return outputString(deviceInfo, "KEY INJECTED");
+    }
+
+    private String outputString(DeviceInfo deviceInfo, String message) {
+        return "DEVICE {" + deviceInfo.getSerialNumber() + "}: " + message + "\n\tSTATUS: " + deviceInfo.getCurrentState();
+    }
+
+    private String red(String string) {
+        return ANSI_RED + string + ANSI_RESET;
     }
 
     private String repackDevice(DeviceInfo deviceInfo) {
@@ -222,48 +246,24 @@ public class OnboardingApp {
         return outputString(deviceInfo, "DEVICE STORED IN WAREHOUSE");
     }
 
+    private DamageRating stringToDamageRating(String damage) {
+        return DamageRating.valueOf(damage.toUpperCase());
+    }
+
     private SegmentPosition stringToSegmentPosition(String xSegmentPos, String ySegmentPos) {
         return SegmentPosition.valueOf((xSegmentPos + "_" + ySegmentPos).toUpperCase());
-    }
-
-    private String outputString(DeviceInfo deviceInfo, String message) {
-        return "DEVICE {" + deviceInfo.getSerialNumber() + "}: " + message + "\n\tSTATUS: " + deviceInfo.getCurrentState();
-    }
-
-    private String warningOutputString(DeviceInfo deviceInfo, String message) {
-        return yellow("WARNING") + " -> " + outputString(deviceInfo, message);
-    }
-
-    private String errorOutputString(DeviceInfo deviceInfo, String message) {
-        return red("ERROR") + " -> " + outputString(deviceInfo, message);
     }
 
     private String transitionExceptionOutputString(DeviceInfo deviceInfo, IllegalStateException e) {
         return warningOutputString(deviceInfo, "ILLEGAL STATE TRANSITION (" + deviceInfo.getCurrentState() + " -> " + e.getMessage() + ")");
     }
 
-    private String illegalRequestOutputString() {
-        return red("ERROR") + " -> ILLEGAL REQUEST FORMAT";
+    private String unrecognizedCommandOutputString(String command) {
+        return illegalRequestOutputString() + "\n\tUNRECOGNIZED COMMAND: " + command;
     }
 
-    private String helpOutputString() {
-        return "=== HELP ===\n" +
-                "1) /add <SerialNo>\n" +
-                "2) /delivery <SerialNo> <BoxRef> <CrateRef>\n" +
-                "3) /damage <SerialNo> <DamageRating>\n" +
-                "4) /sim <SerialNo> <SNN> <IMSI> <IMEI>\n" +
-                "5) /flash <SerialNo>\n" +
-                "6) /key <SerialNo>\n" +
-                "7) /repack <SerialNo>\n" +
-                "8) /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>";
-    }
-
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_YELLOW = "\u001B[33m";
-
-    private String red(String string) {
-        return ANSI_RED + string + ANSI_RESET;
+    private String warningOutputString(DeviceInfo deviceInfo, String message) {
+        return yellow("WARNING") + " -> " + outputString(deviceInfo, message);
     }
 
     private String yellow(String string) {
