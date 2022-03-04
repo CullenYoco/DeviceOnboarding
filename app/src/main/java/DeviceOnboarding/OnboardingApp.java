@@ -52,7 +52,7 @@ public class OnboardingApp {
         Command commandObject = null;
 
         if (command.equals("/h") || command.equals("/help")) {
-            return messagingTool.helpOutputString();
+            return messagingTool.helpOutputString(commandMap);
         }
 
         try {

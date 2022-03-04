@@ -210,14 +210,15 @@ class OnboardingAppTest {
     @Test
     public void helpTest() {
         String expectedString = "=== HELP ===\n" +
-                                "1) /add <SerialNo>\n" +
-                                "2) /delivery <SerialNo> <BoxRef> <CrateRef>\n" +
-                                "3) /damage <SerialNo> <DamageRating>\n" +
-                                "4) /sim <SerialNo> <SNN> <IMSI> <IMEI>\n" +
-                                "5) /flash <SerialNo>\n" +
-                                "6) /key <SerialNo>\n" +
-                                "7) /repack <SerialNo>\n" +
-                                "8) /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>";
+                                "* /add <SerialNo>\n" +
+                                "* /damage <SerialNo> <DamageRating>\n" +
+                                "* /delivery <SerialNo> <BoxRef> <CrateRef>\n" +
+                                "* /flash <SerialNo>\n" +
+                                "* /info <SerialNo>\n" + 
+                                "* /key <SerialNo>\n" +
+                                "* /repack <SerialNo>\n" +
+                                "* /sim <SerialNo> <SNN> <IMSI> <IMEI>\n" +
+                                "* /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>";
 
         assertEquals(expectedString, oa.processRequest("/help"));
     }

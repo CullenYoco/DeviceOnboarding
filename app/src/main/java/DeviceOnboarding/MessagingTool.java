@@ -1,5 +1,8 @@
 package DeviceOnboarding;
 
+import java.util.HashMap;
+import java.util.TreeSet;
+
 public class MessagingTool {
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String ANSI_RED = "\u001B[31m";
@@ -13,16 +16,15 @@ public class MessagingTool {
         return red("ERROR") + " -> " + outputString(deviceInfo, message);
     }
 
-    public String helpOutputString() {
-        return "=== HELP ===\n" +
-                "1) /add <SerialNo>\n" +
-                "2) /delivery <SerialNo> <BoxRef> <CrateRef>\n" +
-                "3) /damage <SerialNo> <DamageRating>\n" +
-                "4) /sim <SerialNo> <SNN> <IMSI> <IMEI>\n" +
-                "5) /flash <SerialNo>\n" +
-                "6) /key <SerialNo>\n" +
-                "7) /repack <SerialNo>\n" +
-                "8) /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>";
+    public String helpOutputString(HashMap<String, Command> commandMap) {
+        TreeSet<String> keys = new TreeSet<String>(commandMap.keySet());
+        String out = "=== HELP ===\n";
+        
+        for (String key: keys) {
+            out += "* " + commandMap.get(key) + "\n";
+        }
+
+        return out.strip();
     }
 
     public String outputString(DeviceInfo deviceInfo, String message) {
