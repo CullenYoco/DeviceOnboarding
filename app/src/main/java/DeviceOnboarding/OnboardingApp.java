@@ -44,23 +44,16 @@ public class OnboardingApp {
     }
 
     public String processRequest(String requestString) {
-        String splitRequest[] = requestString.split(" ");
-
-        if (splitRequest.length < 2) {
-            if (splitRequest[0].equals("/h") || splitRequest[0].equals("/help")) {
-                return messagingTool.helpOutputString();
-            }
-
-            return messagingTool.illegalRequestOutputString();
-        }
-
-        return handleRequest(splitRequest);
+        return handleRequest(requestString.split(" "));
     }
 
     private String handleRequest(String[] requestArgs) {
         String command = requestArgs[0];
-        String serialNumber = requestArgs[1];
         Command commandObject = null;
+
+        if (command.equals("/h") || command.equals("/help")) {
+            return messagingTool.helpOutputString();
+        }
 
         try {
             if (commandMap.containsKey(command)) {
@@ -70,9 +63,9 @@ public class OnboardingApp {
         } catch (IllegalArgumentException e) {
             return messagingTool.errorOutputString("ILLEGAL ARGUMENTS\n\tEXPECTED: " + commandObject);
         } catch (NoSuchElementException e) {
-            return messagingTool.errorOutputString("DEVICE {" + serialNumber + "}: Device NOT Found");
+            return messagingTool.errorOutputString("DEVICE {" + requestArgs[1] + "}: Device NOT Found");
         } catch (IllegalStateException e) {
-            return messagingTool.transitionExceptionOutputString(mockDB.getDevice(serialNumber), e);
+            return messagingTool.transitionExceptionOutputString(mockDB.getDevice(requestArgs[1]), e);
         }
 
         return messagingTool.unrecognizedCommandOutputString(command);

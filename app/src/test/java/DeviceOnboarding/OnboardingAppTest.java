@@ -136,7 +136,7 @@ class OnboardingAppTest {
 
     @Test
     public void illegalRequestTest() {
-        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL REQUEST FORMAT", oa.processRequest("requestString"));
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL REQUEST FORMAT\n\tUNRECOGNIZED COMMAND: requestString", oa.processRequest("requestString"));
         assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL REQUEST FORMAT\n\tUNRECOGNIZED COMMAND: /test", oa.processRequest("/test 1234"));
 
         oa.processRequest("/add 2049-3630");

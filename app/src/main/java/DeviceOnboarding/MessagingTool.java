@@ -25,10 +25,6 @@ public class MessagingTool {
                 "8) /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>";
     }
 
-    public String illegalRequestOutputString() {
-        return red("ERROR") + " -> ILLEGAL REQUEST FORMAT";
-    }
-
     public String outputString(DeviceInfo deviceInfo, String message) {
         return "DEVICE {" + deviceInfo.getSerialNumber() + "}: " + message + "\n\tSTATUS: " + deviceInfo.getCurrentState();
     }
@@ -42,7 +38,7 @@ public class MessagingTool {
     }
 
     public String unrecognizedCommandOutputString(String command) {
-        return illegalRequestOutputString() + "\n\tUNRECOGNIZED COMMAND: " + command;
+        return red("ERROR") + " -> ILLEGAL REQUEST FORMAT\n\tUNRECOGNIZED COMMAND: " + command;
     }
 
     public String warningOutputString(DeviceInfo deviceInfo, String message) {
