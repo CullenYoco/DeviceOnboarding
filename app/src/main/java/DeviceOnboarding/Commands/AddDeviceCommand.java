@@ -11,6 +11,10 @@ public class AddDeviceCommand extends Command {
 
     @Override
     public String runCommand(String[] requestArgs) {
+        if (requestArgs.length < 2) {
+            throw new IllegalArgumentException();
+        }
+
         DeviceInfo deviceInfo;
         
         try {
@@ -23,4 +27,10 @@ public class AddDeviceCommand extends Command {
         
         return messagingTool.outputString(deviceInfo, "DEVICE ADDED");
     }
+
+    @Override
+    public String toString() {
+        return "/add <SerialNo>";
+    }
+
 }

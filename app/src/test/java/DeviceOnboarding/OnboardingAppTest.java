@@ -224,6 +224,8 @@ class OnboardingAppTest {
 
     @Test
     public void illegalArgumentTest() {
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /add <SerialNo>", oa.processRequest("/add"));
+
         oa.processRequest("/add 2049-3630");
 
         assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /delivery <SerialNo> <BoxRef> <CrateRef>", oa.processRequest("/delivery 2049-3630"));
