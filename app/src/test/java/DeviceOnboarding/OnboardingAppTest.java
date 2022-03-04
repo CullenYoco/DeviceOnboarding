@@ -137,7 +137,7 @@ class OnboardingAppTest {
     @Test
     public void illegalRequestTest() {
         assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL REQUEST FORMAT", oa.processRequest("requestString"));
-        assertEquals("\u001B[31mERROR\u001B[0m -> DEVICE {1234}: Device NOT Found", oa.processRequest("/test 1234"));
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL REQUEST FORMAT\n\tUNRECOGNIZED COMMAND: /test", oa.processRequest("/test 1234"));
 
         oa.processRequest("/add 2049-3630");
         assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL REQUEST FORMAT\n\tUNRECOGNIZED COMMAND: /test", oa.processRequest("/test 2049-3630"));
