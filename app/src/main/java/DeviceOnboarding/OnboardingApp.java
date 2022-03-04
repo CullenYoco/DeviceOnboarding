@@ -8,20 +8,16 @@ import DeviceOnboarding.MockDeviceFlash.FlashFailureException;
 import DeviceOnboarding.MockKeyInjector.InjectionFailureException;
 
 public class OnboardingApp {
-    MockDeviceDB mockDB = new MockDeviceDB();
-    MockDeviceFlash mockDeviceFlash;
-    MockKeyInjector mockKeyInjector;
-    
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_YELLOW = "\u001B[33m";
+    private MockDeviceDB mockDB = new MockDeviceDB();
+    private MockDeviceFlash mockDeviceFlash;
+    private MockKeyInjector mockKeyInjector;
+    private MessagingTool messagingTool = new MessagingTool();
 
     public static void main(String[] args) {
         OnboardingApp oa = new OnboardingApp();
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("=== Welcome to Device Onboarding ===");
-        System.out.println("Input a command: (/h or /help for Help) (/q or /quit to Quit)");
+        System.out.println(MessagingTool.welcomeMessageString());
 
         while (scanner.hasNextLine()) {
             String requestString = scanner.nextLine();
@@ -50,10 +46,10 @@ public class OnboardingApp {
 
         if (splitRequest.length < 2) {
             if (splitRequest[0].equals("/h") || splitRequest[0].equals("/help")) {
-                return helpOutputString();
+                return messagingTool.helpOutputString();
             }
 
-            return illegalRequestOutputString();
+            return messagingTool.illegalRequestOutputString();
         }
 
         return handleRequest(splitRequest);
@@ -63,20 +59,20 @@ public class OnboardingApp {
         try {
             deviceInfo.setDamage(stringToDamageRating(damage));
         } catch (IllegalArgumentException e) {
-            return errorOutputString(deviceInfo, "DAMAGE STATUS INVALID {" + damage + "}" );
+            return messagingTool.errorOutputString(deviceInfo, "DAMAGE STATUS INVALID {" + damage + "}" );
         }
         
         if (deviceInfo.getCurrentState() == DeviceState.DEVICE_DAMAGED) {
-            return errorOutputString(deviceInfo, "DAMAGE TOO HIGH");
+            return messagingTool.errorOutputString(deviceInfo, "DAMAGE TOO HIGH");
         }
 
-        return outputString(deviceInfo, "DAMAGE ADDED");
+        return messagingTool.outputString(deviceInfo, "DAMAGE ADDED");
     }
 
     private String addDeliveryInfo(DeviceInfo deviceInfo, String boxReference, String crateReference) {
         deviceInfo.setDeliveryInfo(boxReference, crateReference);
 
-        return outputString(deviceInfo, "DELIVERY INFO ADDED");
+        return messagingTool.outputString(deviceInfo, "DELIVERY INFO ADDED");
     }
 
     private String addDevice(String serialNumber) {
@@ -85,12 +81,12 @@ public class OnboardingApp {
         try {
             deviceInfo = new DeviceInfo(serialNumber);
         } catch (IllegalSerialNumberException e) {
-            return red("ERROR") + " -> ILLEGAL SERIAL NUMBER: " + serialNumber;
+            return messagingTool.errorOutputString("ILLEGAL SERIAL NUMBER: " + serialNumber);
         }
 
         mockDB.addDevice(deviceInfo);
         
-        return outputString(deviceInfo, "DEVICE ADDED");
+        return messagingTool.outputString(deviceInfo, "DEVICE ADDED");
     }
 
     private String addSIM(DeviceInfo deviceInfo, String SNN, String IMSI, String IMEI) {
@@ -98,11 +94,7 @@ public class OnboardingApp {
 
         deviceInfo.setSIMCard(simCard);
 
-        return outputString(deviceInfo, "SIM ADDED");
-    }
-
-    private String errorOutputString(DeviceInfo deviceInfo, String message) {
-        return red("ERROR") + " -> " + outputString(deviceInfo, message);
+        return messagingTool.outputString(deviceInfo, "SIM ADDED");
     }
 
     private String flashDevice(DeviceInfo deviceInfo) {
@@ -110,15 +102,15 @@ public class OnboardingApp {
            if (mockDeviceFlash.flashDevice()) {
                deviceInfo.flashDevice();
            } else {
-               return warningOutputString(deviceInfo, "DEVICE FLASH FAILED");
+               return messagingTool.warningOutputString(deviceInfo, "DEVICE FLASH FAILED");
            }
        } catch (FlashFailureException e) {
            deviceInfo.flashFailure();
 
-           return errorOutputString(deviceInfo, "(CATASTROPHIC) DEVICE FLASH FAILED");
+           return messagingTool.errorOutputString(deviceInfo, "(CATASTROPHIC) DEVICE FLASH FAILED");
        }
 
-       return outputString(deviceInfo, "DEVICE FLASHED");
+       return messagingTool.outputString(deviceInfo, "DEVICE FLASHED");
    }
 
     private String getDeviceInfo(String serialNumber) {
@@ -172,28 +164,12 @@ public class OnboardingApp {
                 return getDeviceInfo(requestArgs[1]);
             }
         } catch (NoSuchElementException e) {
-            return red("ERROR") + " -> DEVICE {" + serialNumber + "}: Device NOT Found";
+            return messagingTool.errorOutputString("DEVICE {" + serialNumber + "}: Device NOT Found");
         } catch (IllegalStateException e) {
-            return transitionExceptionOutputString(deviceInfo, e);
+            return messagingTool.transitionExceptionOutputString(deviceInfo, e);
         }
 
-        return unrecognizedCommandOutputString(command);
-    }
-
-    private String helpOutputString() {
-        return "=== HELP ===\n" +
-                "1) /add <SerialNo>\n" +
-                "2) /delivery <SerialNo> <BoxRef> <CrateRef>\n" +
-                "3) /damage <SerialNo> <DamageRating>\n" +
-                "4) /sim <SerialNo> <SNN> <IMSI> <IMEI>\n" +
-                "5) /flash <SerialNo>\n" +
-                "6) /key <SerialNo>\n" +
-                "7) /repack <SerialNo>\n" +
-                "8) /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>";
-    }
-
-    private String illegalRequestOutputString() {
-        return red("ERROR") + " -> ILLEGAL REQUEST FORMAT";
+        return messagingTool.unrecognizedCommandOutputString(command);
     }
 
     private String injectKey(DeviceInfo deviceInfo) {
@@ -203,29 +179,21 @@ public class OnboardingApp {
             if (mockKeyInjector.injectKey(key)) {
                 deviceInfo.injectKey(key);
             } else {
-                return warningOutputString(deviceInfo, "KEY INJECTION FAILED");
+                return messagingTool.warningOutputString(deviceInfo, "KEY INJECTION FAILED");
             }
         } catch (InjectionFailureException e) {
             deviceInfo.injectionFailure();
 
-            return errorOutputString(deviceInfo, "(CATASTROPHIC) KEY INJECTION FAILED");
+            return messagingTool.errorOutputString(deviceInfo, "(CATASTROPHIC) KEY INJECTION FAILED");
         }
 
-        return outputString(deviceInfo, "KEY INJECTED");
-    }
-
-    private String outputString(DeviceInfo deviceInfo, String message) {
-        return "DEVICE {" + deviceInfo.getSerialNumber() + "}: " + message + "\n\tSTATUS: " + deviceInfo.getCurrentState();
-    }
-
-    private String red(String string) {
-        return ANSI_RED + string + ANSI_RESET;
+        return messagingTool.outputString(deviceInfo, "KEY INJECTED");
     }
 
     private String repackDevice(DeviceInfo deviceInfo) {
         deviceInfo.sendForRepack();
 
-        return outputString(deviceInfo, "DEVICE SENT FOR REPACK");
+        return messagingTool.outputString(deviceInfo, "DEVICE SENT FOR REPACK");
     }
 
     private String storeDevice(DeviceInfo deviceInfo, String warehouseNo, String sectionNo, String rowNo, String shelfNo,
@@ -237,13 +205,13 @@ public class OnboardingApp {
                                                             Integer.parseInt(rowNo), Integer.parseInt(shelfNo),
                                                             Integer.parseInt(segmentNo), stringToSegmentPosition(ySegmentPos, xSegmentPos));
         } catch (IllegalArgumentException e) {
-            return errorOutputString(deviceInfo, "SEGMENT POSITION INVALID {" + ySegmentPos + ", " + xSegmentPos + "}" );
+            return messagingTool.errorOutputString(deviceInfo, "SEGMENT POSITION INVALID {" + ySegmentPos + ", " + xSegmentPos + "}" );
         }
         
 
         deviceInfo.setWarehouse(warehouseInfo);
 
-        return outputString(deviceInfo, "DEVICE STORED IN WAREHOUSE");
+        return messagingTool.outputString(deviceInfo, "DEVICE STORED IN WAREHOUSE");
     }
 
     private DamageRating stringToDamageRating(String damage) {
@@ -252,21 +220,5 @@ public class OnboardingApp {
 
     private SegmentPosition stringToSegmentPosition(String xSegmentPos, String ySegmentPos) {
         return SegmentPosition.valueOf((xSegmentPos + "_" + ySegmentPos).toUpperCase());
-    }
-
-    private String transitionExceptionOutputString(DeviceInfo deviceInfo, IllegalStateException e) {
-        return warningOutputString(deviceInfo, "ILLEGAL STATE TRANSITION (" + deviceInfo.getCurrentState() + " -> " + e.getMessage() + ")");
-    }
-
-    private String unrecognizedCommandOutputString(String command) {
-        return illegalRequestOutputString() + "\n\tUNRECOGNIZED COMMAND: " + command;
-    }
-
-    private String warningOutputString(DeviceInfo deviceInfo, String message) {
-        return yellow("WARNING") + " -> " + outputString(deviceInfo, message);
-    }
-
-    private String yellow(String string) {
-        return ANSI_YELLOW + string + ANSI_RESET;
     }
 }
