@@ -16,6 +16,9 @@ public class OnboardingApp {
         OnboardingApp oa = new OnboardingApp();
         Scanner scanner = new Scanner(System.in);
 
+        System.out.println("=== Welcome to Device Onboarding ===");
+        System.out.println("Input a command: (/h or /help for Help) (/q or /quit to Quit)");
+
         while (scanner.hasNextLine()) {
             String requestString = scanner.nextLine();
 
@@ -42,7 +45,7 @@ public class OnboardingApp {
         String splitRequest[] = requestString.split(" ");
 
         if (splitRequest.length < 2) {
-            if (splitRequest[0].equals("/help")) {
+            if (splitRequest[0].equals("/h") || splitRequest[0].equals("/help")) {
                 return helpOutputString();
             }
 
