@@ -11,16 +11,16 @@ public class SIMCardInfo {
         this.IMEI = IMEI;
     }
 
-    public String getSNN() {
-        return SNN;
+    public String getIMEI() {
+        return IMEI;
     }
 
     public String getIMSI() {
         return IMSI;
     }
 
-    public String getIMEI() {
-        return IMEI;
+    public String getSNN() {
+        return SNN;
     }
 
     @Override
