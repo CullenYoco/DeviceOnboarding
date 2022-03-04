@@ -24,8 +24,18 @@ public class DeviceInfo {
         currentState = DeviceState.SERIAL_NUMBER_RECORDED;
     }
 
-    public String getSerialNumber() {
-        return serialNumber;
+    public void flashDevice() {
+        if (currentState != DeviceState.SIM_INSERTED_AND_RECORDED) {
+            throw new IllegalStateException(DeviceState.FLASHED + "");
+        }
+
+        this.isFlashed = true;
+
+        currentState = DeviceState.FLASHED;
+    }
+
+    public void flashFailure() {
+        currentState = DeviceState.SEVERE_FLASH_FAILURE;
     }
 
     public String getBoxReference() {
@@ -36,24 +46,42 @@ public class DeviceInfo {
         return crateReference;
     }
 
-    public DamageRating getDamage() {
-        return damage;
+    public DeviceState getCurrentState() {
+        return currentState;
     }
 
-    public SIMCardInfo getSIMCardInfo() {
-        return simCardInfo;
+    public DamageRating getDamage() {
+        return damage;
     }
 
     public byte[] getKey() {
         return key;
     }
 
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
+    public SIMCardInfo getSIMCardInfo() {
+        return simCardInfo;
+    }
+
     public WarehouseInfo getWarehouseInfo() {
         return warehouseInfo;
     }
 
-    public DeviceState getCurrentState() {
-        return currentState;
+    public void injectKey(byte[] key) {
+        if (currentState != DeviceState.FLASHED) {
+            throw new IllegalStateException(DeviceState.KEY_INJECTED + "");
+        }
+
+        this.key = key;
+
+        currentState = DeviceState.KEY_INJECTED;
+    }
+
+    public void injectionFailure() {
+        currentState = DeviceState.SEVERE_KEY_INJECTION_FAILURE;
     }
 
     public boolean isFlashed() {
@@ -64,15 +92,14 @@ public class DeviceInfo {
         return isSentForRepack;
     }
 
-    public void setDeliveryInfo(String boxReference, String crateReference) {
-        if (currentState != DeviceState.SERIAL_NUMBER_RECORDED) {
-            throw new IllegalStateException(DeviceState.DELIVERY_INFO_RECORDED + "");
+    public void sendForRepack() {
+        if (currentState != DeviceState.KEY_INJECTED) {
+            throw new IllegalStateException(DeviceState.SENT_FOR_REPACK + "");
         }
 
-        this.boxReference = boxReference;
-        this.crateReference = crateReference;
+        this.isSentForRepack = true;
 
-        currentState = DeviceState.DELIVERY_INFO_RECORDED;
+        currentState = DeviceState.SENT_FOR_REPACK;
     }
 
     public void setDamage(DamageRating damage) {
@@ -89,6 +116,17 @@ public class DeviceInfo {
         }
     }
 
+    public void setDeliveryInfo(String boxReference, String crateReference) {
+        if (currentState != DeviceState.SERIAL_NUMBER_RECORDED) {
+            throw new IllegalStateException(DeviceState.DELIVERY_INFO_RECORDED + "");
+        }
+
+        this.boxReference = boxReference;
+        this.crateReference = crateReference;
+
+        currentState = DeviceState.DELIVERY_INFO_RECORDED;
+    }
+
     public void setSIMCard(SIMCardInfo simCard) {
         if (currentState != DeviceState.DAMAGE_RECORDED) {
             throw new IllegalStateException(DeviceState.SIM_INSERTED_AND_RECORDED + "");
@@ -99,36 +137,6 @@ public class DeviceInfo {
         currentState = DeviceState.SIM_INSERTED_AND_RECORDED;
     }
 
-    public void flashDevice() {
-        if (currentState != DeviceState.SIM_INSERTED_AND_RECORDED) {
-            throw new IllegalStateException(DeviceState.FLASHED + "");
-        }
-
-        this.isFlashed = true;
-
-        currentState = DeviceState.FLASHED;
-    }
-
-    public void injectKey(byte[] key) {
-        if (currentState != DeviceState.FLASHED) {
-            throw new IllegalStateException(DeviceState.KEY_INJECTED + "");
-        }
-
-        this.key = key;
-
-        currentState = DeviceState.KEY_INJECTED;
-    }
-
-    public void sendForRepack() {
-        if (currentState != DeviceState.KEY_INJECTED) {
-            throw new IllegalStateException(DeviceState.SENT_FOR_REPACK + "");
-        }
-
-        this.isSentForRepack = true;
-
-        currentState = DeviceState.SENT_FOR_REPACK;
-    }
-
     public void setWarehouse(WarehouseInfo warehouseInfo) {
         if (currentState != DeviceState.SENT_FOR_REPACK) {
             throw new IllegalStateException(DeviceState.STORED_IN_WAREHOUSE + "");
@@ -137,14 +145,6 @@ public class DeviceInfo {
         this.warehouseInfo = warehouseInfo;
 
         currentState = DeviceState.STORED_IN_WAREHOUSE;
-    }
-
-    public void flashFailure() {
-        currentState = DeviceState.SEVERE_FLASH_FAILURE;
-    }
-
-    public void injectionFailure() {
-        currentState = DeviceState.SEVERE_KEY_INJECTION_FAILURE;
     }
 
     @Override
