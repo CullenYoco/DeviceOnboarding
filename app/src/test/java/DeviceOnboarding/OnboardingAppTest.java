@@ -271,6 +271,17 @@ class OnboardingAppTest {
         assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>",
                      oa.processRequest("/store 2049-3630 1 2 3 4 5 front"));
 
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>",
+                     oa.processRequest("/store 2049-3630 one 2 3 4 5 front left"));
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>",
+                     oa.processRequest("/store 2049-3630 1 two 3 4 5 front left"));
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>",
+                     oa.processRequest("/store 2049-3630 1 2 three 4 5 front left"));
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>",
+                     oa.processRequest("/store 2049-3630 1 2 3 four 5 front left"));
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>",
+                     oa.processRequest("/store 2049-3630 1 2 3 4 five front left"));
+
         assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /info <SerialNo>", oa.processRequest("/info"));
     }
 
