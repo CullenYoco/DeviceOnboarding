@@ -242,6 +242,9 @@ class OnboardingAppTest {
         assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /sim <SerialNo> <SNN> <IMSI> <IMEI>", oa.processRequest("/sim 2049-3630 SNN IMSI"));
 
         oa.processRequest("/sim 2049-3630 SNN IMSI IMEI");
+
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /flash <SerialNo>", oa.processRequest("/flash"));
+
         oa.processRequest("/flash 2049-3630");
         oa.processRequest("/key 2049-3630");
         oa.processRequest("/repack 2049-3630");
