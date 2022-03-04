@@ -19,5 +19,5 @@ public abstract class Command {
         this.messagingTool = messagingTool;
     }
 
-    public abstract String runCommand(String[] requestArgs) throws NoSuchElementException, IllegalStateException;
+    public abstract String runCommand(String[] requestArgs) throws IllegalArgumentException, NoSuchElementException, IllegalStateException;
 }

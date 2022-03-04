@@ -10,6 +10,10 @@ public class DamageCommand extends Command {
 
     @Override
     public String runCommand(String[] requestArgs) {
+        if (requestArgs.length < 3) {
+            throw new IllegalArgumentException();
+        }
+
         DeviceInfo deviceInfo = mockDB.getDevice(requestArgs[1]);
 
         try {
@@ -27,5 +31,10 @@ public class DamageCommand extends Command {
     
     private DamageRating stringToDamageRating(String damage) {
         return DamageRating.valueOf(damage.toUpperCase());
+    }
+
+    @Override
+    public String toString() {
+        return "/damage <SerialNo> <DamageRating>";
     }
 }

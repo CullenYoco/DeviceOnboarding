@@ -222,6 +222,44 @@ class OnboardingAppTest {
         assertEquals(expectedString, oa.processRequest("/help"));
     }
 
+    @Test
+    public void illegalArgumentTest() {
+        oa.processRequest("/add 2049-3630");
+
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /delivery <SerialNo> <BoxRef> <CrateRef>", oa.processRequest("/delivery 2049-3630"));
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /delivery <SerialNo> <BoxRef> <CrateRef>", oa.processRequest("/delivery 2049-3630 box"));
+        
+        oa.processRequest("/delivery 2049-3630 box crate");
+
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /damage <SerialNo> <DamageRating>", oa.processRequest("/damage 2049-3630"));
+
+        oa.processRequest("/damage 2049-3630 none");
+
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /sim <SerialNo> <SNN> <IMSI> <IMEI>", oa.processRequest("/sim 2049-3630"));
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /sim <SerialNo> <SNN> <IMSI> <IMEI>", oa.processRequest("/sim 2049-3630 SNN"));
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /sim <SerialNo> <SNN> <IMSI> <IMEI>", oa.processRequest("/sim 2049-3630 SNN IMSI"));
+
+        oa.processRequest("/sim 2049-3630 SNN IMSI IMEI");
+        oa.processRequest("/flash 2049-3630");
+        oa.processRequest("/key 2049-3630");
+        oa.processRequest("/repack 2049-3630");
+
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>",
+                     oa.processRequest("/store 2049-3630"));
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>",
+                     oa.processRequest("/store 2049-3630 1"));
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>",
+                     oa.processRequest("/store 2049-3630 1 2"));
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>",
+                     oa.processRequest("/store 2049-3630 1 2 3"));
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>",
+                     oa.processRequest("/store 2049-3630 1 2 3 4"));
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>",
+                     oa.processRequest("/store 2049-3630 1 2 3 4 5"));
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>",
+                     oa.processRequest("/store 2049-3630 1 2 3 4 5 front"));
+    }
+
     private void damageRatingTest(DamageRating damageRating, String testString) {
         oa = new OnboardingApp();
 

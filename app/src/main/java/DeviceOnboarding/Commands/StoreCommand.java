@@ -10,6 +10,10 @@ public class StoreCommand extends Command{
 
     @Override
     public String runCommand(String[] requestArgs) {
+        if (requestArgs.length < 9) {
+            throw new IllegalArgumentException();
+        }
+
         DeviceInfo deviceInfo = mockDB.getDevice(requestArgs[1]);
         WarehouseInfo warehouseInfo;
         
@@ -28,6 +32,11 @@ public class StoreCommand extends Command{
 
     private SegmentPosition stringToSegmentPosition(String xSegmentPos, String ySegmentPos) {
         return SegmentPosition.valueOf((xSegmentPos + "_" + ySegmentPos).toUpperCase());
+    }
+
+    @Override
+    public String toString() {
+        return "/store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>";
     }
     
 }

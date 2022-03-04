@@ -43,18 +43,6 @@ public class OnboardingApp {
         initCommandMap();
     }
 
-    private void initCommandMap() {
-        commandMap.put("/add", new AddDeviceCommand(mockDB, messagingTool));
-        commandMap.put("/delivery", new DeliveryCommand(mockDB, messagingTool));
-        commandMap.put("/damage", new DamageCommand(mockDB, messagingTool));
-        commandMap.put("/sim", new SimCommand(mockDB, messagingTool));
-        commandMap.put("/flash", new FlashCommand(mockDB, mockDeviceFlash, messagingTool));
-        commandMap.put("/key", new KeyCommand(mockDB, mockKeyInjector, messagingTool));
-        commandMap.put("/repack", new RepackCommand(mockDB, messagingTool));
-        commandMap.put("/store", new StoreCommand(mockDB, messagingTool));
-        commandMap.put("/info", new InfoCommand(mockDB));
-    }
-
     public String processRequest(String requestString) {
         String splitRequest[] = requestString.split(" ");
 
@@ -72,11 +60,15 @@ public class OnboardingApp {
     private String handleRequest(String[] requestArgs) {
         String command = requestArgs[0];
         String serialNumber = requestArgs[1];
+        Command commandObject = null;
 
         try {
             if (commandMap.containsKey(command)) {
-                return commandMap.get(command).runCommand(requestArgs);
+                commandObject = commandMap.get(command);
+                return commandObject.runCommand(requestArgs);
             }
+        } catch (IllegalArgumentException e) {
+            return messagingTool.errorOutputString("ILLEGAL ARGUMENTS\n\tEXPECTED: " + commandObject);
         } catch (NoSuchElementException e) {
             return messagingTool.errorOutputString("DEVICE {" + serialNumber + "}: Device NOT Found");
         } catch (IllegalStateException e) {
@@ -84,5 +76,17 @@ public class OnboardingApp {
         }
 
         return messagingTool.unrecognizedCommandOutputString(command);
+    }
+
+    private void initCommandMap() {
+        commandMap.put("/add", new AddDeviceCommand(mockDB, messagingTool));
+        commandMap.put("/delivery", new DeliveryCommand(mockDB, messagingTool));
+        commandMap.put("/damage", new DamageCommand(mockDB, messagingTool));
+        commandMap.put("/sim", new SimCommand(mockDB, messagingTool));
+        commandMap.put("/flash", new FlashCommand(mockDB, mockDeviceFlash, messagingTool));
+        commandMap.put("/key", new KeyCommand(mockDB, mockKeyInjector, messagingTool));
+        commandMap.put("/repack", new RepackCommand(mockDB, messagingTool));
+        commandMap.put("/store", new StoreCommand(mockDB, messagingTool));
+        commandMap.put("/info", new InfoCommand(mockDB));
     }
 }
