@@ -11,6 +11,10 @@ public class KeyCommand extends Command{
 
     @Override
     public String runCommand(String[] requestArgs) {
+        if (requestArgs.length < 2) {
+            throw new IllegalArgumentException();
+        }
+
         DeviceInfo deviceInfo = mockDB.getDevice(requestArgs[1]);
         byte key[] = new byte[128];
 
@@ -27,6 +31,11 @@ public class KeyCommand extends Command{
         }
 
         return messagingTool.outputString(deviceInfo, "KEY INJECTED");
+    }
+
+    @Override
+    public String toString() {
+        return "/key <SerialNo>";
     }
     
 }

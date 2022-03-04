@@ -246,6 +246,9 @@ class OnboardingAppTest {
         assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /flash <SerialNo>", oa.processRequest("/flash"));
 
         oa.processRequest("/flash 2049-3630");
+
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /key <SerialNo>", oa.processRequest("/key"));
+
         oa.processRequest("/key 2049-3630");
         oa.processRequest("/repack 2049-3630");
 
