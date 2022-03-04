@@ -269,6 +269,8 @@ class OnboardingAppTest {
                      oa.processRequest("/store 2049-3630 1 2 3 4 5"));
         assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /store <SerialNo> <WarehouseNo> <SectionNo> <RowNo> <ShelfNo> <SegmentNo> <YSegmentPos> <XSegmentPos>",
                      oa.processRequest("/store 2049-3630 1 2 3 4 5 front"));
+
+        assertEquals("\u001B[31mERROR\u001B[0m -> ILLEGAL ARGUMENTS\n\tEXPECTED: /info <SerialNo>", oa.processRequest("/info"));
     }
 
     private void damageRatingTest(DamageRating damageRating, String testString) {
